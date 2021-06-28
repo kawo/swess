@@ -13,5 +13,5 @@ __pycache__/
 .flake8
 flake8_rapport/
 
-# conf
+# black conf
 pyproject.toml
