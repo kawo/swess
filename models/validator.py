@@ -29,12 +29,12 @@ class String(Validator):
         name ([str]): display name of the string.
     """
 
-    def __init__(self, minsize=None, maxsize=None, name=None):
+    def __init__(self, minsize=None, maxsize=None, name=None) -> None:
         self.minsize = minsize
         self.maxsize = maxsize
         self.name = name
 
-    def validate(self, value):
+    def validate(self, value: str):
         try:
             if not isinstance(value, str):
                 raise TypeError
@@ -65,11 +65,11 @@ class Choice(Validator):
         *options ([list]): list of choices.
     """
 
-    def __init__(self, name, *options):
+    def __init__(self, name: str, *options) -> None:
         self.name = name
         self.options = set(options)
 
-    def validate(self, value):
+    def validate(self, value: str):
         value = str.upper(value)
         try:
             if value not in self.options:
@@ -86,11 +86,11 @@ class Date(Validator):
         format ([str]): date format.
     """
 
-    def __init__(self, name, format):
+    def __init__(self, name: str, format: str) -> None:
         self.name = name
         self.format = format
 
-    def validate(self, value):
+    def validate(self, value: str):
         try:
             datetime.strptime(value, self.format)
         except ValueError:
@@ -104,7 +104,7 @@ class FloatPositive(Validator):
         name ([str]): display name of the float.
     """
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         self.name = name
 
     def validate(self, value):
