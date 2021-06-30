@@ -24,9 +24,9 @@ class String(Validator):
     """Check a string input
 
     Args:
-        minsize ([int]): min size of string.
-        maxsize ([int]): max size of string.
-        name ([str]): display name of the string.
+        minsize (int): min size of string.
+        maxsize (int): max size of string.
+        name (str): display name of the string.
     """
 
     def __init__(self, minsize=None, maxsize=None, name=None) -> None:
@@ -61,8 +61,8 @@ class Choice(Validator):
     """Check a choice input
 
     Args:
-        name ([str]): display name of the choice.
-        *options ([list]): list of choices.
+        name (str): display name of the choice.
+        *options (list): list of choices.
     """
 
     def __init__(self, name: str, *options) -> None:
@@ -82,8 +82,8 @@ class Date(Validator):
     """Check a date input
 
     Args:
-        name ([str]): display name of the date.
-        format ([str]): date format.
+        name (str): display name of the date.
+        format (str): date format.
     """
 
     def __init__(self, name: str, format: str) -> None:
@@ -101,13 +101,13 @@ class FloatPositive(Validator):
     """Check if a float is zero or positive
 
     Args:
-        name ([str]): display name of the float.
+        name (str): display name of the float.
     """
 
     def __init__(self, name: str) -> None:
         self.name = name
 
-    def validate(self, value):
+    def validate(self, value: float):
         try:
             if not isinstance(value, float):
                 raise TypeError

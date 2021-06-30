@@ -19,41 +19,27 @@ class Player:
     birthday = Date("Anniversaire", "%d/%m/%Y")
     rating = FloatPositive("Classement")
 
-    def __init__(self, last_name: str, first_name: str, birthday: str, sex: str, rating=0.0) -> None:
+    def __init__(self, last_name: str, first_name: str, birthday: str, sex: str, rating: float = 0.0) -> None:
         self.last_name = last_name
         self.first_name = first_name
         self.sex = sex
         self.rating = rating
         self.birthday = birthday
 
-    def serializePlayer(self, Player) -> dict:
-        """serialize player for database insert
-
-        Args:
-            Player ([obj]): player object
-
-        Returns:
-            [dict]: return a player in dict format
-        """
-        self.player = Player
-        serialized_player = {
-            "last_name": self.player.last_name,
-            "first_name": self.player.first_name,
-            "sex": self.player.sex,
-            "rating": self.player.rating,
-            "birthday": self.player.birthday,
-        }
-        return serialized_player
-
-    def addPlayer(self, Player: object) -> None:
+    def registerPlayer(self, value) -> None:
         """add a player to the database
 
         Args:
-            Player ([obj]): player object
+            value (Player): player object.
         """
-        self.player = self.serializePlayer(Player)
+
         player_db = Database()
-        player_db.register("players", self.player)
+        player_db.insertPlayer(value)
+
+    def getAllPlayers(self):
+        """get all the players from the database"""
+        player_db = Database()
+        return player_db.players_table.all()
 
     def __str__(self) -> str:
         return f"- Joueur -\nNom : {self.last_name}\nPrénom : {self.first_name}\nSexe : {str.upper(self.sex)}\nAnniversaire : {self.birthday}\nClassement : {self.rating}"
