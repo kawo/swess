@@ -40,11 +40,12 @@ class Database:
             bool: return True if entry exist.
         """
         if table == "players":
-            if self.players_table.search(where("last_name") == value["last_name"]) and self.players_table.search(where("first_name") == value["first_name"]):
-                print(f"Le joueur {value['last_name']} {value['first_name']} existe déjà !")
-                return True
-            else:
-                return False
+            if value["last_name"] != "" and value["first_name"] != "":
+                if self.players_table.search(where("last_name") == value["last_name"]) and self.players_table.search(where("first_name") == value["first_name"]):
+                    print(f"Le joueur {value['last_name']} {value['first_name']} existe déjà !")
+                    return True
+                else:
+                    return False
         else:
             return False
 

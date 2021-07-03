@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
+from rich.console import Console
 
 
 class Validator(ABC):
@@ -33,28 +34,29 @@ class String(Validator):
         self.minsize = minsize
         self.maxsize = maxsize
         self.name = name
+        self.console = Console()
 
     def validate(self, value: str):
         try:
             if not isinstance(value, str):
                 raise TypeError
         except TypeError:
-            return print(f"Le {self.name} ne doit contenir que des caractères")
+            return self.console.print(f"Le {self.name} ne doit contenir que des caractères")
         try:
             if len(value) == 0:
                 raise ValueError
         except ValueError:
-            return print(f"Le {self.name} ne peut pas être vide")
+            return self.console.print(f"Le {self.name} ne peut pas être vide")
         try:
             if self.minsize is not None and len(value) < self.minsize:
                 raise ValueError
         except ValueError:
-            return print(f"Le {self.name} ne peut pas être plus petit que {self.minsize} caractère(s)")
+            return self.console.print(f"Le {self.name} ne peut pas être plus petit que {self.minsize} caractère(s)")
         try:
             if self.maxsize is not None and len(value) > self.maxsize:
                 raise ValueError
         except ValueError:
-            return print(f"Le {self.name} ne peut pas être plus long que {self.maxsize} caractère(s)")
+            return self.console.print(f"Le {self.name} ne peut pas être plus long que {self.maxsize} caractère(s)")
 
 
 class Choice(Validator):
@@ -68,6 +70,7 @@ class Choice(Validator):
     def __init__(self, name: str, *options) -> None:
         self.name = name
         self.options = set(options)
+        self.console = Console()
 
     def validate(self, value: str):
         value = str.upper(value)
@@ -75,7 +78,7 @@ class Choice(Validator):
             if value not in self.options:
                 raise ValueError
         except ValueError:
-            return print(f"Le {self.name} doit être l'une de ces options : {self.options}")
+            return self.console.print(f"Le {self.name} doit être l'une de ces options : {self.options}")
 
 
 class Date(Validator):
@@ -89,12 +92,13 @@ class Date(Validator):
     def __init__(self, name: str, format: str) -> None:
         self.name = name
         self.format = format
+        self.console = Console()
 
     def validate(self, value: str):
         try:
             datetime.strptime(value, self.format)
         except ValueError:
-            return print(f"Le format de {self.name} ({value}) n'est pas valide ! Veuillez utiliser {self.format}")
+            return self.console.print(f"Le format de {self.name} ({value}) n'est pas valide ! Veuillez utiliser {self.format}")
 
 
 class FloatPositive(Validator):
@@ -106,15 +110,16 @@ class FloatPositive(Validator):
 
     def __init__(self, name: str) -> None:
         self.name = name
+        self.console = Console()
 
     def validate(self, value: float):
         try:
             if not isinstance(value, float):
                 raise TypeError
         except TypeError:
-            return print(f"Le {self.name} doit être en décimal.")
+            return self.console.print(f"Le {self.name} doit être en décimal.")
         try:
             if value < 0:
                 raise ValueError
         except ValueError:
-            return print(f"{self.name} doit être positif ou nul !")
+            return self.console.print(f"{self.name} doit être positif ou nul !")

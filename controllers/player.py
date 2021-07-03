@@ -8,7 +8,7 @@ class PlayerController:
         self.console = Console()
 
     def showAllPlayers(self):
-        """ask all the players to the model"""
+        """ask model for all the players"""
         show_all_players = Player.getAllPlayers(self)
         return show_all_players
 
@@ -23,5 +23,23 @@ class PlayerController:
             player = Player(last_name, first_name, birthday, sex, float(rating))
         else:
             player = Player(last_name, first_name, birthday, sex)
-        player.registerPlayer(player)
-        return player
+        if player is None:
+            return None
+        else:
+            player.registerPlayer(player)
+
+    def showAskAddPlayer(self):
+        """ask user to retry adding player"""
+        choice = self.console.input("Voulez-vous recommencer ? (o/n)")
+        if choice == "o":
+            self.view.displayAddPlayer()
+        else:
+            exit()
+
+    def showMenuPlayer(self):
+        """show menu for player view"""
+        choice = self.console.input("Retourner au menu principal ? (o/n) : ")
+        if choice == "o":
+            print("ok")
+        else:
+            exit()
