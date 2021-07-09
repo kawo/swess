@@ -98,7 +98,9 @@ class Date(Validator):
         try:
             datetime.strptime(value, self.format)
         except ValueError:
-            return self.console.print(f"Le format de {self.name} ({value}) n'est pas valide ! Veuillez utiliser {self.format}")
+            return self.console.print(
+                f"Le format de {self.name} ({value}) n'est pas valide ! Veuillez utiliser {self.format}"
+            )
 
 
 class FloatPositive(Validator):
@@ -118,6 +120,30 @@ class FloatPositive(Validator):
                 raise TypeError
         except TypeError:
             return self.console.print(f"Le {self.name} doit être en décimal.")
+        try:
+            if value < 0:
+                raise ValueError
+        except ValueError:
+            return self.console.print(f"{self.name} doit être positif ou nul !")
+
+
+class IntPositive(Validator):
+    """Check if a int is zero or positive
+
+    Args:
+        name (str): display name of the int.
+    """
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+        self.console = Console()
+
+    def validate(self, value: int):
+        try:
+            if not isinstance(value, int):
+                raise TypeError
+        except TypeError:
+            return self.console.print(f"Le {self.name} doit être un nombre entier.")
         try:
             if value < 0:
                 raise ValueError

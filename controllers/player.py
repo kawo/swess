@@ -3,7 +3,6 @@ from rich.console import Console
 
 
 class PlayerController:
-
     def __init__(self) -> None:
         self.console = Console()
 
@@ -20,13 +19,15 @@ class PlayerController:
         sex = self.console.input("Entrez le Sexe (M ou F) : ")
         rating = self.console.input("Entrez le classement (optionel) : ")
         if rating:
-            player = Player(last_name, first_name, birthday, sex, float(rating))
+            try:
+                Player(last_name, first_name, birthday, sex, int(rating))
+            except Exception as e:
+                print(e)
         else:
-            player = Player(last_name, first_name, birthday, sex)
-        if player is None:
-            return None
-        else:
-            player.registerPlayer(player)
+            try:
+                Player(last_name, first_name, birthday, sex)
+            except Exception as e:
+                print(e)
 
     def showAskAddPlayer(self):
         """ask user to retry adding player"""

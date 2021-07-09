@@ -1,4 +1,4 @@
-from models.validator import Choice, Date, FloatPositive, String
+from models.validator import Choice, Date, IntPositive, String
 from models.database import Database
 
 
@@ -17,9 +17,9 @@ class Player:
     first_name = String(minsize=3, maxsize=30, name="Prénom")
     sex = Choice("Sexe", "M", "F")
     birthday = Date("Anniversaire", "%d/%m/%Y")
-    rating = FloatPositive("Classement")
+    rating = IntPositive("Classement")
 
-    def __init__(self, last_name: str, first_name: str, birthday: str, sex: str, rating: float = 0.0) -> None:
+    def __init__(self, last_name: str, first_name: str, birthday: str, sex: str, rating: int = 0) -> None:
         self.last_name = last_name
         self.first_name = first_name
         self.sex = sex

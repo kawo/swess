@@ -1,14 +1,14 @@
-# coding: utf-8
-
 import tinydb
 from tinydb.queries import where
+from rich.console import Console
 
 
 class Database:
-
-    db = tinydb.TinyDB("db.json", ensure_ascii=False)
-    players_table = db.table("players")
-    tournament_table = db.table("tournament")
+    def __init__(self) -> None:
+        self.db = tinydb.TinyDB("db.json", ensure_ascii=False)
+        self.players_table = self.db.table("players")
+        self.tournament_table = self.db.table("tournament")
+        self.console = Console()
 
     def serializePlayer(self, value) -> dict:
         """serialize player for database insert
@@ -39,15 +39,21 @@ class Database:
         Returns:
             bool: return True if entry exist.
         """
+        check = False
+        last_name = value["last_name"]
+        first_name = value["first_name"]
         if table == "players":
-            if value["last_name"] != "" and value["first_name"] != "":
-                if self.players_table.search(where("last_name") == value["last_name"]) and self.players_table.search(where("first_name") == value["first_name"]):
-                    print(f"Le joueur {value['last_name']} {value['first_name']} existe déjà !")
-                    return True
+            if last_name != "" and first_name != "":
+                if self.players_table.search(where("last_name") == last_name) and self.players_table.search(
+                    where("first_name") == first_name
+                ):
+                    self.console.print(f"Le joueur {last_name} {first_name} existe déjà !")
+                    check = True
                 else:
-                    return False
+                    check = False
         else:
-            return False
+            check = False
+        return check
 
     def insertPlayer(self, value) -> None:
         """insert a player to the database

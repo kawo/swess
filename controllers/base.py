@@ -1,15 +1,14 @@
 from views.base import BaseView
-from views.player import PlayerView
 from rich.console import Console
 
 
 class BaseController:
     def __init__(self) -> None:
         self.console = Console()
+        self.view = BaseView()
 
     def showMainMenu(self):
         """tell the view to show the main menu"""
-        self.view = BaseView()
         self.view.displayMainMenu()
         choice = self.console.input("Entrez le numéro correspondant à votre choix : ")
         self.mainMenuChoice(choice)
@@ -25,9 +24,7 @@ class BaseController:
         """
         self.choice = value
         if self.choice == "1":
-            self.view = PlayerView()
-            self.view.displayAllPlayer()
+            self.view.displayAllPlayers()
         if self.choice == "4":
-            self.view = PlayerView()
             self.view.displayAddPlayer()
         return None

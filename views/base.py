@@ -1,6 +1,7 @@
 from rich.console import Console
 from rich.table import Table
 from rich import box
+from views.player import PlayerView
 
 
 class BaseView:
@@ -10,7 +11,12 @@ class BaseView:
     def displayMainMenu(self) -> None:
         """display the main menu"""
 
-        table = Table(show_header=True, header_style="bold", title="-=[ SWESS ]=-\nGestionnaire de tournoi d'échecs", box=box.SIMPLE)
+        table = Table(
+            show_header=True,
+            header_style="bold",
+            title="-=[ SWESS ]=-\nGestionnaire de tournoi d'échecs",
+            box=box.SIMPLE,
+        )
         table.add_column("Menu principal")
         table.add_row("1. Afficher la liste complète des joueurs")
         table.add_row("2. Afficher l'historique des tournois")
@@ -20,3 +26,11 @@ class BaseView:
         table.add_row("6. Quitter")
 
         self.console.print(table)
+
+    def displayAllPlayers(self):
+        self.view = PlayerView()
+        self.view.displayAllPlayers()
+
+    def displayAddPlayer(self):
+        self.view = PlayerView()
+        self.view.displayAddPlayer()

@@ -13,6 +13,9 @@ __pycache__/
 .flake8
 flake8_rapport/
 
+# mypy
+.mypy_cache
+
 # general conf (black, mypy)
 pyproject.toml
 
