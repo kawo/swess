@@ -1,45 +1,29 @@
-from models.validator import Choice, Date, IntPositive, String
-from models.database import Database
+from models.validator import String, OneOf, Date
 
 
 class Player:
-    """A player of chess tournament
+    """Player Model"""
 
-    Args:
-        last_name (str): last name.
-        first_name (str): first name.
-        birthday (str): date of birth.
-        sex (str): sex (M or F).
-        rating (int, optional): rating of player. Defaults to 0.0.
-    """
-
-    last_name = String(minsize=3, maxsize=30, name="Nom")
     first_name = String(minsize=3, maxsize=30, name="Prénom")
-    sex = Choice("Sexe", "M", "F")
+    last_name = String(minsize=3, maxsize=30, name="Nom")
+    gender = OneOf("Genre", "M", "F")
     birthday = Date("Anniversaire", "%d/%m/%Y")
-    rating = IntPositive("Classement")
 
-    def __init__(self, last_name: str, first_name: str, birthday: str, sex: str, rating: int = 0) -> None:
-        self.last_name = last_name
-        self.first_name = first_name
-        self.sex = sex
-        self.rating = rating
-        self.birthday = birthday
-
-    def registerPlayer(self, value) -> None:
-        """add a player to the database
+    def __init__(self, first_name: str, last_name: str, birthday: str, gender: str, rating: int = 0) -> None:
+        """Player Object
 
         Args:
-            value (Player): player object.
+            first_name (str): First Name of the player.
+            last_name (str): Last Name of the player.
+            birthday (str): Birthday of the player (dd/mm/yyyy format).
+            gender (str): Gender of the player (M or F).
+            rating (int, optional): Rating of the player. Defaults to 0.
         """
-
-        player_db = Database()
-        player_db.insertPlayer(value)
-
-    def getAllPlayers(self):
-        """get all the players from the database"""
-        player_db = Database()
-        return player_db.players_table.all()
+        self.first_name = first_name
+        self.last_name = last_name
+        self.birthday = birthday
+        self.gender = gender
+        self.rating = rating
 
     def __str__(self) -> str:
-        return f"- Joueur -\nNom : {self.last_name}\nPrénom : {self.first_name}\nSexe : {str.upper(self.sex)}\nAnniversaire : {self.birthday}\nClassement : {self.rating}"
+        return f"Joueur {self.first_name} {self.last_name}, né(e) le {self.birthday}, de sexe {self.gender} et dont le classement est de {self.rating}."

@@ -1,16 +1,24 @@
+import logging
+
+from views.player import PlayerView
+from views.tournament import TournamentView
+
 from rich.console import Console
 from rich.table import Table
 from rich import box
-from views.player import PlayerView
 
 
-class BaseView:
+class View:
+    """Main View"""
 
-    console = Console()
+    def __init__(self) -> None:
+        self.view_player = PlayerView()
+        self.view_tournament = TournamentView()
+        self.console = Console()
 
-    def displayMainMenu(self) -> None:
-        """display the main menu"""
-
+    def displayMainMenu(self):
+        """Display the Main Menu"""
+        logging.info("View.displayMainMenu")
         table = Table(
             show_header=True,
             header_style="bold",
@@ -24,13 +32,4 @@ class BaseView:
         table.add_row("4. Ajouter un nouveau joueur")
         table.add_row("5. Créer un nouveau tournoi")
         table.add_row("6. Quitter")
-
         self.console.print(table)
-
-    def displayAllPlayers(self):
-        self.view = PlayerView()
-        self.view.displayAllPlayers()
-
-    def displayAddPlayer(self):
-        self.view = PlayerView()
-        self.view.displayAddPlayer()

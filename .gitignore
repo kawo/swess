@@ -21,3 +21,6 @@ pyproject.toml
 
 # tinydb
 *.json
+
+# logs
+logs/*.log

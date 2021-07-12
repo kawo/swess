@@ -1,11 +1,12 @@
+import logging
+
 from abc import ABC, abstractmethod
 from datetime import datetime
+
 from rich.console import Console
 
 
 class Validator(ABC):
-    """Abstract class to validate inputs"""
-
     def __set_name__(self, owner, name):
         self.private_name = "_" + name
 
@@ -22,73 +23,65 @@ class Validator(ABC):
 
 
 class String(Validator):
-    """Check a string input
-
-    Args:
-        minsize (int): min size of string.
-        maxsize (int): max size of string.
-        name (str): display name of the string.
-    """
-
-    def __init__(self, minsize=None, maxsize=None, name=None) -> None:
+    def __init__(self, minsize=None, maxsize=None, name=None):
         self.minsize = minsize
         self.maxsize = maxsize
         self.name = name
         self.console = Console()
 
-    def validate(self, value: str):
+    def validate(self, value):
         try:
             if not isinstance(value, str):
                 raise TypeError
         except TypeError:
-            return self.console.print(f"Le {self.name} ne doit contenir que des caractères")
+            logging.error(f"{self.name} must be a str type! ({value!r})")
+            return self.console.print(f"Le {self.name} doit être une chaîne de caractères !")
         try:
-            if len(value) == 0:
+            if not value:
                 raise ValueError
         except ValueError:
-            return self.console.print(f"Le {self.name} ne peut pas être vide")
+            logging.error(f"{self.name} can not be empty! ({value!r})")
+            return self.console.print(f"[bold red]Le {self.name} ne peut pas être vide ![/bold red]")
         try:
             if self.minsize is not None and len(value) < self.minsize:
                 raise ValueError
         except ValueError:
-            return self.console.print(f"Le {self.name} ne peut pas être plus petit que {self.minsize} caractère(s)")
+            logging.error(f"{self.name} can not be lower than {self.minsize}! ({value!r})")
+            return self.console.print(
+                f"[bold red]Le {self.name} ne peut pas être plus petit que {self.minsize!r} ![/bold red]"
+            )
         try:
             if self.maxsize is not None and len(value) > self.maxsize:
                 raise ValueError
         except ValueError:
-            return self.console.print(f"Le {self.name} ne peut pas être plus long que {self.maxsize} caractère(s)")
+            logging.error(f"{self.name} can not be lower than {self.maxsize}! ({value!r})")
+            return self.console.print(
+                f"[bold red]Le {self.name} ne peut pas être plus grand que {self.maxsize!r} ![/bold red]"
+            )
 
 
-class Choice(Validator):
-    """Check a choice input
-
-    Args:
-        name (str): display name of the choice.
-        *options (list): list of choices.
-    """
-
-    def __init__(self, name: str, *options) -> None:
+class OneOf(Validator):
+    def __init__(self, name, *options):
         self.name = name
         self.options = set(options)
         self.console = Console()
 
-    def validate(self, value: str):
-        value = str.upper(value)
+    def validate(self, value):
+        try:
+            if not value:
+                raise ValueError
+        except ValueError:
+            logging.error(f"{self.name} can not be empty! ({value!r})")
+            return self.console.print(f"[bold red]{self.name} ne peut pas être vide ![/bold red]")
         try:
             if value not in self.options:
                 raise ValueError
         except ValueError:
-            return self.console.print(f"Le {self.name} doit être l'une de ces options : {self.options}")
+            logging.error(f"{self.name} must be one of {self.options!r} ({value!r})")
+            return self.console.print(f"[bold red]{self.name} doit faire parti de {self.options!r} ![/bold red]")
 
 
 class Date(Validator):
-    """Check a date input
-
-    Args:
-        name (str): display name of the date.
-        format (str): date format.
-    """
-
     def __init__(self, name: str, format: str) -> None:
         self.name = name
         self.format = format
@@ -96,56 +89,15 @@ class Date(Validator):
 
     def validate(self, value: str):
         try:
+            if not value:
+                raise ValueError
+        except ValueError:
+            logging.error(f"{self.name} can not be empty! ({value!r})")
+            return self.console.print(f"[bold red]{self.name} ne peut pas être vide ![/bold red]")
+        try:
             datetime.strptime(value, self.format)
         except ValueError:
+            logging.error(f"{self.name} must be in {self.format} ({value!r})")
             return self.console.print(
-                f"Le format de {self.name} ({value}) n'est pas valide ! Veuillez utiliser {self.format}"
+                f"[bold red]Le format de {self.name} ({value!r}) n'est pas valide ! Veuillez utiliser {self.format}[/bold red]"
             )
-
-
-class FloatPositive(Validator):
-    """Check if a float is zero or positive
-
-    Args:
-        name (str): display name of the float.
-    """
-
-    def __init__(self, name: str) -> None:
-        self.name = name
-        self.console = Console()
-
-    def validate(self, value: float):
-        try:
-            if not isinstance(value, float):
-                raise TypeError
-        except TypeError:
-            return self.console.print(f"Le {self.name} doit être en décimal.")
-        try:
-            if value < 0:
-                raise ValueError
-        except ValueError:
-            return self.console.print(f"{self.name} doit être positif ou nul !")
-
-
-class IntPositive(Validator):
-    """Check if a int is zero or positive
-
-    Args:
-        name (str): display name of the int.
-    """
-
-    def __init__(self, name: str) -> None:
-        self.name = name
-        self.console = Console()
-
-    def validate(self, value: int):
-        try:
-            if not isinstance(value, int):
-                raise TypeError
-        except TypeError:
-            return self.console.print(f"Le {self.name} doit être un nombre entier.")
-        try:
-            if value < 0:
-                raise ValueError
-        except ValueError:
-            return self.console.print(f"{self.name} doit être positif ou nul !")
