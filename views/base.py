@@ -1,8 +1,5 @@
 import logging
 
-from views.player import PlayerView
-from views.tournament import TournamentView
-
 from rich.console import Console
 from rich.table import Table
 from rich import box
@@ -12,8 +9,6 @@ class View:
     """Main View"""
 
     def __init__(self) -> None:
-        self.view_player = PlayerView()
-        self.view_tournament = TournamentView()
         self.console = Console()
 
     def displayMainMenu(self):

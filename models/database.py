@@ -1,3 +1,4 @@
+import re
 import tinydb
 from tinydb.queries import where
 from rich.console import Console
@@ -45,7 +46,7 @@ class Database:
             if self.players_table.search(where("last_name") == last_name) and self.players_table.search(
                 where("first_name") == first_name
             ):
-                self.console.print(f"Le joueur {last_name} {first_name} existe déjà !")
+                self.console.print(f"[bold red]Le joueur {first_name} {last_name} existe déjà ![/bold red]")
                 check = True
             else:
                 check = False
@@ -67,3 +68,7 @@ class Database:
             else:
                 insert = False
         return insert
+
+    def getAll(self):
+        players = self.players_table.all()
+        return players

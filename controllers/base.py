@@ -50,6 +50,10 @@ class Controller:
             self.console.print("[bold red]Vous devez entrer un numéro ![/bold red]\n")
             logging.warning("User input is empty")
             self.startApp()
+        if choice == "1":
+            logging.info("User choose 1")
+            logging.info("Calling view.displayAllPlayers()")
+            self.controller_player.showAllPlayers()
         if choice == "4":
             logging.info("Calling controller player.addPlayer()")
             new_player = self.controller_player.addPlayer()

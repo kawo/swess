@@ -25,12 +25,18 @@ class Player:
         self.birthday = birthday
         self.gender = gender
         self.rating = rating
-        self.db = Database()
 
     def addToDb(self, value) -> bool:
         self.player = value
+        self.db = Database()
         self.insert_player = self.db.insertPlayer(self.player)
         return self.insert_player
+
+    def getAllPlayers(self):
+        """get all the players from the database"""
+        self.db = Database()
+        all_players = self.db.getAll()
+        return all_players
 
     def modifyFirstName(self, value: str):
         pass

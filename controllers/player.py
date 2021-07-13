@@ -1,13 +1,15 @@
 import logging
 
 from models.player import Player
+from views.player import PlayerView
 
 from rich.console import Console
 
 
 class PlayerController:
     def __init__(self) -> None:
-        self.console = Console(color_system=None)
+        self.console = Console()
+        self.view = PlayerView()
 
     def addPlayer(self) -> bool:
         """Create a new Player
@@ -49,3 +51,8 @@ class PlayerController:
         except (TypeError, ValueError):
             logging.error("Can not create player!")
             return False
+
+    def showAllPlayers(self):
+        """ask model for all the players"""
+        show_all_players = Player.getAllPlayers(self)
+        self.view.displayAllPlayers(show_all_players)
