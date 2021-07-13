@@ -69,5 +69,6 @@ class Database:
         return insert
 
     def getAll(self):
+        """Get all players from database"""
         players = self.players_table.all()
         return players

@@ -27,6 +27,14 @@ class Player:
         self.rating = rating
 
     def addToDb(self, value) -> bool:
+        """Add player to database
+
+        Args:
+            value (Player): player instance to add
+
+        Returns:
+            bool: return True if player is added to database
+        """
         self.player = value
         self.db = Database()
         self.insert_player = self.db.insertPlayer(self.player)
