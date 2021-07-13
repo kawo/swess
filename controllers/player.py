@@ -45,9 +45,10 @@ class PlayerController:
                 self.console.print(
                     f"[bold green]Le joueur {first_name} {last_name}, du genre {gender}, né(e) le {birthday} avec un classement de {rating} a été ajouté dans la base de données ![/bold green]"
                 )
+                return True
             else:
                 logging.error("Can not insert player in database !")
-            return True
+                return False
         except (TypeError, ValueError):
             logging.error("Can not create player!")
             return False
