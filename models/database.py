@@ -1,4 +1,3 @@
-import re
 import tinydb
 from tinydb.queries import where
 from rich.console import Console
