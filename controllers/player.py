@@ -27,10 +27,13 @@ class PlayerController:
         logging.info(f"rating = {rating}")
         logging.info("Trying to create Player instance...")
         try:
-            new_player = Player(first_name, last_name, birthday, gender, rating)
+            if rating:
+                new_player = Player(first_name, last_name, birthday, gender, int(rating))
+            else:
+                new_player = Player(first_name, last_name, birthday, gender)
             logging.info("Player successfully created!")
             return self.console.print(new_player)
-        except BaseException:
+        except (TypeError, ValueError):
             logging.error("Can not create player!")
             self.askRetry()
 
