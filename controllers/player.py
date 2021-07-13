@@ -26,9 +26,23 @@ class PlayerController:
         rating = self.console.input("Entrez le classement (optionnel) : ")
         logging.info(f"rating = {rating}")
         logging.info("Trying to create Player instance...")
-        player = Player(first_name, last_name, birthday, gender, rating)
-        if player:
+        try:
+            new_player = Player(first_name, last_name, birthday, gender, rating)
             logging.info("Player successfully created!")
-            return self.console.print(player)
-        else:
+            return self.console.print(new_player)
+        except BaseException:
             logging.error("Can not create player!")
+            self.askRetry()
+
+    def askRetry(self):
+        logging.info("Asking if user wants to retry creating a player")
+        ask = self.console.input("Recommencer ? (o/n) : ")
+        if ask == "":
+            logging.warning("User input is empty")
+            self.console.print("Vous devez répondre par [O]ui ou [N]on !")
+            self.askRetry()
+        if ask == "o":
+            logging.info("User said Yes")
+            self.addPlayer()
+        if ask == "n":
+            logging.info("User said No")

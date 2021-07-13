@@ -1,4 +1,4 @@
-from models.validator import String, OneOf, Date
+from models.validator import String, OneOf, Date, IntPositive
 
 
 class Player:
@@ -8,6 +8,7 @@ class Player:
     last_name = String(minsize=3, maxsize=30, name="Nom")
     gender = OneOf("Genre", "M", "F")
     birthday = Date("Anniversaire", "%d/%m/%Y")
+    rating = IntPositive("Classement")
 
     def __init__(self, first_name: str, last_name: str, birthday: str, gender: str, rating: int = 0) -> None:
         """Player Object
@@ -26,4 +27,4 @@ class Player:
         self.rating = rating
 
     def __str__(self) -> str:
-        return f"Joueur {self.first_name} {self.last_name}, né(e) le {self.birthday}, de sexe {self.gender} et dont le classement est de {self.rating}."
+        return f"Joueur {self.first_name} {self.last_name}, né(e) le {self.birthday}, de genre {self.gender} et dont le classement est de {self.rating}."
