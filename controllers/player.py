@@ -9,7 +9,12 @@ class PlayerController:
     def __init__(self) -> None:
         self.console = Console(color_system=None)
 
-    def addPlayer(self):
+    def addPlayer(self) -> bool:
+        """Create a new Player
+
+        Returns:
+            Player: a new created Player
+        """
         logging.info("Asking First Name")
         first_name = self.console.input("Entrez le prénom : ")
         logging.info(f"first_name = {first_name}")
@@ -32,20 +37,8 @@ class PlayerController:
             else:
                 new_player = Player(first_name, last_name, birthday, gender)
             logging.info("Player successfully created!")
-            return self.console.print(new_player)
+            self.console.print(new_player)
+            return True
         except (TypeError, ValueError):
             logging.error("Can not create player!")
-            self.askRetry()
-
-    def askRetry(self):
-        logging.info("Asking if user wants to retry creating a player")
-        ask = self.console.input("Recommencer ? (o/n) : ")
-        if ask == "":
-            logging.warning("User input is empty")
-            self.console.print("Vous devez répondre par [O]ui ou [N]on !")
-            self.askRetry()
-        if ask == "o":
-            logging.info("User said Yes")
-            self.addPlayer()
-        if ask == "n":
-            logging.info("User said No")
+            return False

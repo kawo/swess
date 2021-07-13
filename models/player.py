@@ -2,7 +2,6 @@ from models.validator import String, OneOf, Date, IntPositive
 
 
 class Player:
-    """Player Model"""
 
     first_name = String(minsize=3, maxsize=30, name="Prénom")
     last_name = String(minsize=3, maxsize=30, name="Nom")

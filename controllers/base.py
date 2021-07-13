@@ -52,8 +52,30 @@ class Controller:
             self.startApp()
         if choice == "4":
             logging.info("Calling controller player.addPlayer()")
-            self.controller_player.addPlayer()
+            new_player = self.controller_player.addPlayer()
+            if new_player is False:
+                self.askRetry()
         if choice == "6":
             self.console.print("Aurevoir !")
             logging.info("Program terminated by the user")
             sys.exit()
+
+    def askRetry(self):
+        """Ask user to retry Player creation"""
+        logging.info("Asking if user wants to retry creating a player")
+        ask = self.console.input("Recommencer ? (o/n) : ")
+        if ask == "":
+            logging.warning("User input is empty")
+            self.console.print("Vous devez répondre par [O]ui ou [N]on !")
+            self.askRetry()
+        if ask == "o":
+            logging.info("User said Yes")
+            new_player = self.controller_player.addPlayer()
+            if new_player is False:
+                self.askRetry()
+        if ask == "n":
+            logging.info("User said No")
+            logging.info("Returning to Main Menu...")
+            self.startApp()
+        else:
+            self.askRetry()

@@ -23,7 +23,14 @@ class Validator(ABC):
 
 
 class String(Validator):
-    def __init__(self, minsize=None, maxsize=None, name=None):
+    def __init__(self, minsize: int, maxsize: int, name: str):
+        """String validation
+
+        Args:
+            minsize (int): minimal size of the string
+            maxsize (int): maximal size of the string
+            name (str): display name of the string
+        """
         self.minsize = minsize
         self.maxsize = maxsize
         self.name = name
@@ -49,7 +56,13 @@ class String(Validator):
 
 
 class OneOf(Validator):
-    def __init__(self, name, *options):
+    def __init__(self, name: str, *options) -> None:
+        """Choices validation
+
+        Args:
+            name (str): display name of the list of choices
+            *options (any): list of choices
+        """
         self.name = name
         self.options = set(options)
         self.console = Console()
@@ -65,6 +78,12 @@ class OneOf(Validator):
 
 class Date(Validator):
     def __init__(self, name: str, format: str) -> None:
+        """Date validation
+
+        Args:
+            name (str): display name of the date
+            format (str): date format
+        """
         self.name = name
         self.format = format
         self.console = Console()
@@ -88,6 +107,11 @@ class Date(Validator):
 
 class IntPositive(Validator):
     def __init__(self, name: str) -> None:
+        """Int positive validation
+
+        Args:
+            name (str): display name of the int to check
+        """
         self.name = name
         self.console = Console()
 
