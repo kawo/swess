@@ -37,7 +37,14 @@ class PlayerController:
             else:
                 new_player = Player(first_name, last_name, birthday, gender)
             logging.info("Player successfully created!")
-            self.console.print(new_player)
+            logging.info("Trying to add player to database...")
+            if new_player.addToDb(new_player):
+                logging.info("Player successfully inserted in database!")
+                self.console.print(
+                    f"[bold green]Le joueur {first_name} {last_name}, du genre {gender}, né(e) le {birthday} avec un classement de {rating} a été ajouté dans la base de données ![/bold green]"
+                )
+            else:
+                logging.error("Can not insert player in database !")
             return True
         except (TypeError, ValueError):
             logging.error("Can not create player!")

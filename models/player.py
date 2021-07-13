@@ -1,4 +1,5 @@
 from models.validator import String, OneOf, Date, IntPositive
+from models.database import Database
 
 
 class Player:
@@ -24,6 +25,30 @@ class Player:
         self.birthday = birthday
         self.gender = gender
         self.rating = rating
+        self.db = Database()
+
+    def addToDb(self, value) -> bool:
+        self.player = value
+        self.insert_player = self.db.insertPlayer(self.player)
+        return self.insert_player
+
+    def modifyFirstName(self, value: str):
+        pass
+
+    def modifyLastName(self, value: str):
+        pass
+
+    def modifyBirthday(self, value: str):
+        pass
+
+    def modifyGender(self, value: str):
+        pass
+
+    def modifyRating(self, value: int):
+        pass
+
+    def delete(self, value: int):
+        pass
 
     def __str__(self) -> str:
-        return f"Joueur {self.first_name} {self.last_name}, né(e) le {self.birthday}, de genre {self.gender} et dont le classement est de {self.rating}."
+        return f"Joueur {self.first_name} {self.last_name}, du genre {self.gender}, né(e) le {self.birthday} avec un classement de {self.rating}."
