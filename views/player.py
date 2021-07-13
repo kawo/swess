@@ -12,7 +12,7 @@ class PlayerView:
 
         self.players_list = value
         table = Table(
-            show_header=True, header_style="bold", title="-=[ SWESS ]=-\nListe complète des joueurs", box=box.SIMPLE
+            show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nListe complète des joueurs", box=box.SIMPLE
         )
         table.add_column("Id")
         table.add_column("Nom")

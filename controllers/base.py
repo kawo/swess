@@ -51,7 +51,6 @@ class Controller:
             logging.warning("User input is empty")
             self.startApp()
         if choice == "1":
-            logging.info("User choose 1")
             logging.info("Calling view.displayAllPlayers()")
             self.controller_player.showAllPlayers()
         if choice == "4":

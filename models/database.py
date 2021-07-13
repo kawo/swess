@@ -2,6 +2,8 @@ import tinydb
 from tinydb.queries import where
 from rich.console import Console
 
+import logging
+
 
 class Database:
     def __init__(self) -> None:
@@ -19,6 +21,7 @@ class Database:
         Returns:
             dict: return a player in dict format.
         """
+        logging.info("Serializing player...")
         self.player = value
         serialized_player = {
             "first_name": self.player.first_name,
@@ -38,6 +41,7 @@ class Database:
         Returns:
             bool: return True if entry exist.
         """
+        logging.info("Checking if player already exist in database...")
         check = False
         last_name = value["last_name"]
         first_name = value["first_name"]
@@ -46,8 +50,10 @@ class Database:
                 where("first_name") == first_name
             ):
                 self.console.print(f"[bold red]Le joueur {first_name} {last_name} existe déjà ![/bold red]")
+                logging.warning("Player already exist!")
                 check = True
             else:
+                logging.info("Player does not exist")
                 check = False
         else:
             check = False
@@ -63,12 +69,15 @@ class Database:
         self.value = self.serializePlayer(value)
         if self.checkPlayerExists(self.value) is False:
             if self.players_table.insert(self.value):
+                logging.info("Player inserted in database!")
                 insert = True
             else:
+                logging.warning("Player not inserted in database!")
                 insert = False
         return insert
 
     def getAll(self):
         """Get all players from database"""
+        logging.info("Getting all players from database...")
         players = self.players_table.all()
         return players
