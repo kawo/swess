@@ -101,7 +101,7 @@ class Date(Validator):
 
         if self.date_ok is False:
             logging.error(f"{self.name} must be in {self.format} ({value!r})")
-            raise ValueError(self.console.print(f"[bold red]{self.name} must be in {self.format}![/bold red]"))
+            raise ValueError(self.console.print(f"[bold red]{self.name} must be in {self.format}![/bold red]"))  # type: ignore
 
 
 class IntPositive(Validator):
@@ -120,4 +120,4 @@ class IntPositive(Validator):
             raise TypeError(self.console.print(f"[bold red]{self.name} must be an integer![/bold red]"))
         if value < 0:
             logging.error(f"{self.name} must be zero or positive ({value!r})")
-            raise ValueError(self.console.print(f"[bold red]{self.name} must be zero or positive![/bold red]"))
+            raise ValueError(self.console.print(f"[bold red]{self.name} must be zero or positive![/bold red]"))  # type: ignore
