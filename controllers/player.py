@@ -18,19 +18,19 @@ class PlayerController:
             Player: a new created Player
         """
         logging.info("Asking First Name")
-        first_name = self.console.input("Entrez le prénom : ")
+        first_name = self.console.input("First Name: ")
         logging.info(f"first_name = {first_name}")
         logging.info("Asking Last Name")
-        last_name = self.console.input("Entrez le nom : ")
+        last_name = self.console.input("Last Name: ")
         logging.info(f"last_name = {last_name}")
         logging.info("Asking Birthday")
-        birthday = self.console.input("Entrez la date d'anniversaire (jj/mm/aaaa) : ")
+        birthday = self.console.input("Birthday (dd/mm/yyyy): ")
         logging.info(f"birthday = {birthday}")
         logging.info("Asking Gender")
-        gender = self.console.input("Entrez le genre (M ou F) : ")
+        gender = self.console.input("Gender (M or F): ")
         logging.info(f"gender = {gender}")
         logging.info("Asking Rating")
-        rating = self.console.input("Entrez le classement (optionnel) : ")
+        rating = self.console.input("Ranking (optionnal): ")
         logging.info(f"rating = {rating}")
         logging.info("Trying to create Player instance...")
         try:
@@ -43,7 +43,7 @@ class PlayerController:
             if new_player.addToDb(new_player):
                 logging.info("Player successfully inserted in database!")
                 self.console.print(
-                    f"[bold green]Le joueur {first_name} {last_name}, du genre {gender}, né(e) le {birthday} avec un classement de {rating} a été ajouté dans la base de données ![/bold green]"
+                    f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of {rating} added in database![/bold green]"
                 )
                 return True
             else:
@@ -55,5 +55,11 @@ class PlayerController:
 
     def showAllPlayers(self):
         """ask model for all the players"""
-        show_all_players = Player.getAllPlayers(self)
-        self.view.displayAllPlayers(show_all_players)
+        players = Player.getAllPlayers(self)
+        self.view.displayAllPlayers(players)
+
+    def sortPlayersByRating(self):
+        """sort players by rating"""
+        players = Player.getAllPlayers(self)
+        players_sorted = sorted(players, key=lambda player: player["rating"], reverse=True)
+        self.view.displaySortedByRating(players_sorted)

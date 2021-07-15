@@ -12,17 +12,37 @@ class PlayerView:
 
         self.players_list = value
         table = Table(
-            show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nListe complète des joueurs", box=box.SIMPLE
+            show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nList of all players", box=box.SIMPLE
         )
         table.add_column("Id")
-        table.add_column("Nom")
-        table.add_column("Prénom")
-        table.add_column("Genre")
-        table.add_column("Anniversaire")
-        table.add_column("Classement")
+        table.add_column("Last Name")
+        table.add_column("First Name")
+        table.add_column("Gender")
+        table.add_column("Birthday")
+        table.add_column("Ranking")
         for player in self.players_list:
             table.add_row(
                 str(player.doc_id),
+                player["last_name"],
+                player["first_name"],
+                player["gender"],
+                player["birthday"],
+                str(player["rating"]),
+            )
+        self.console.print(table)
+
+    def displaySortedByRating(self, value) -> None:
+        """display all recorded players sorted by rating"""
+
+        self.sorted_players = value
+        table = Table(show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nPlayers Ranking", box=box.SIMPLE)
+        table.add_column("Last Name")
+        table.add_column("First Name")
+        table.add_column("Gender")
+        table.add_column("Birthday")
+        table.add_column("Ranking")
+        for player in self.sorted_players:
+            table.add_row(
                 player["last_name"],
                 player["first_name"],
                 player["gender"],

@@ -38,21 +38,21 @@ class String(Validator):
 
     def validate(self, value):
         if not isinstance(value, str):
-            self.console.print(f"Le {self.name} doit être une chaîne de caractères !")
-            raise TypeError(logging.error(f"{self.name} must be a str type! ({value!r})"))
+            logging.error(f"{self.name} must be a str type! ({value!r})")
+            raise TypeError(self.console.print(f"[bold red]{self.name} must be a str type! ({value!r})[/bold red]"))
         if not value:
-            self.console.print(f"[bold red]Le {self.name} ne peut pas être vide ![/bold red]")
-            raise ValueError(logging.error(f"{self.name} can not be empty! ({value!r})"))
+            logging.error(f"{self.name} can not be empty! ({value!r})")
+            raise ValueError(self.console.print(f"[bold red]{self.name} can not be empty![/bold red]"))
         if self.minsize is not None and len(value) < self.minsize:
-            self.console.print(
-                f"[bold red]Le {self.name} ne peut pas être plus petit que {self.minsize!r} ![/bold red]"
+            logging.error(f"{self.name} can not be lower than {self.minsize}! ({value!r})")
+            raise ValueError(
+                self.console.print(f"[bold red]{self.name} can not be lower than {self.minsize!r}![/bold red]")
             )
-            raise ValueError(logging.error(f"{self.name} can not be lower than {self.minsize}! ({value!r})"))
         if self.maxsize is not None and len(value) > self.maxsize:
-            self.console.print(
-                f"[bold red]Le {self.name} ne peut pas être plus grand que {self.maxsize!r} ![/bold red]"
+            logging.error(f"{self.name} can not be lower than {self.maxsize}! ({value!r})")
+            raise ValueError(
+                self.console.print(f"[bold red]{self.name} can not be greater than {self.maxsize!r}![/bold red]")
             )
-            raise ValueError(logging.error(f"{self.name} can not be lower than {self.maxsize}! ({value!r})"))
 
 
 class OneOf(Validator):
@@ -69,11 +69,11 @@ class OneOf(Validator):
 
     def validate(self, value):
         if not value:
-            self.console.print(f"[bold red]{self.name} ne peut pas être vide ![/bold red]")
-            raise ValueError(logging.error(f"{self.name} can not be empty! ({value!r})"))
+            logging.error(f"{self.name} can not be empty! ({value!r})")
+            raise ValueError(self.console.print(f"[bold red]{self.name} can not be empty![/bold red]"))
         if value not in self.options:
-            self.console.print(f"[bold red]{self.name} doit faire parti de {self.options!r} ![/bold red]")
-            raise ValueError(logging.error(f"{self.name} must be one of {self.options!r} ({value!r})"))
+            logging.error(f"{self.name} must be one of {self.options!r} ({value!r})")
+            raise ValueError(self.console.print(f"[bold red]{self.name} must be one of {self.options!r}![/bold red]"))
 
 
 class Date(Validator):
@@ -87,22 +87,21 @@ class Date(Validator):
         self.name = name
         self.format = format
         self.console = Console()
+        self.date_ok = True
 
     def validate(self, value: str):
         if value is None:
-            self.console.print(f"[bold red]{self.name} ne peut pas être vide ![/bold red]")
-            raise ValueError(logging.error(f"{self.name} can not be empty! ({value!r})"))
-        date_ok = True
+            logging.error(f"{self.name} can not be empty! ({value!r})")
+            self.date_ok = False
+            raise ValueError(self.console.print(f"[bold red]{self.name} can not be empty![/bold red]"))
         try:
-            date_ok = bool(datetime.strptime(value, self.format))
+            self.date_ok = bool(datetime.strptime(value, self.format))
         except ValueError:
-            date_ok = False
+            self.date_ok = False
 
-        if date_ok is False:
-            self.console.print(
-                f"[bold red]Le format de {self.name} ({value!r}) n'est pas valide ! Veuillez utiliser {self.format}[/bold red]"
-            )
-            raise ValueError(logging.error(f"{self.name} must be in {self.format} ({value!r})"))
+        if self.date_ok is False:
+            logging.error(f"{self.name} must be in {self.format} ({value!r})")
+            raise ValueError(self.console.print(f"[bold red]{self.name} must be in {self.format}![/bold red]"))
 
 
 class IntPositive(Validator):
@@ -117,8 +116,8 @@ class IntPositive(Validator):
 
     def validate(self, value: int):
         if not isinstance(value, int):
-            self.console.print(f"Le {self.name} doit être un nombre entier.")
-            raise TypeError(logging.error(f"{self.name} must be an int"))
+            logging.error(f"{self.name} must be an int ({value!r})")
+            raise TypeError(self.console.print(f"[bold red]{self.name} must be an integer![/bold red]"))
         if value < 0:
-            self.console.print(f"{self.name} doit être positif ou nul !")
-            raise ValueError(logging.error(f"{self.name} must be zero or positive ({value!r})"))
+            logging.error(f"{self.name} must be zero or positive ({value!r})")
+            raise ValueError(self.console.print(f"[bold red]{self.name} must be zero or positive![/bold red]"))

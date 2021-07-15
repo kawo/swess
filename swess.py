@@ -1,12 +1,14 @@
 import logging
+from datetime import date
 
 from controllers.base import Controller
 
+today = date.today().strftime("%d-%m-%Y")
+
 logging.basicConfig(
-    filename="logs/swess.log",
+    filename=f"logs/{today}.log",
     format="%(asctime)s %(levelname)s %(message)s",
     datefmt="%d/%m/%Y %H:%M:%S",
-    filemode="w",
     encoding="utf-8",
     level=logging.DEBUG,
 )  # type: ignore

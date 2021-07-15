@@ -49,7 +49,7 @@ class Database:
             if self.players_table.search(where("last_name") == last_name) and self.players_table.search(
                 where("first_name") == first_name
             ):
-                self.console.print(f"[bold red]Le joueur {first_name} {last_name} existe déjà ![/bold red]")
+                self.console.print(f"[bold red]Player {first_name} {last_name} already exist![/bold red]")
                 logging.warning("Player already exist!")
                 check = True
             else:

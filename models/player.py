@@ -6,9 +6,9 @@ class Player:
 
     first_name = String(minsize=3, maxsize=30, name="Prénom")
     last_name = String(minsize=3, maxsize=30, name="Nom")
-    gender = OneOf("Genre", "M", "F")
-    birthday = Date("Anniversaire", "%d/%m/%Y")
-    rating = IntPositive("Classement")
+    gender = OneOf("Gender", "M", "F")
+    birthday = Date("Birthday", "%d/%m/%Y")
+    rating = IntPositive("Ranking")
 
     def __init__(self, first_name: str, last_name: str, birthday: str, gender: str, rating: int = 0) -> None:
         """Player Object
@@ -65,4 +65,4 @@ class Player:
         pass
 
     def __str__(self) -> str:
-        return f"Joueur {self.first_name} {self.last_name}, du genre {self.gender}, né(e) le {self.birthday} avec un classement de {self.rating}."
+        return f"Player: {self.first_name} {self.last_name}, {self.gender} gender, born on {self.birthday} with a ranking of {self.rating}."
