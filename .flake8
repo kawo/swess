@@ -1,3 +1,5 @@
+# conf for Black Formatter compatibility
+
 [flake8]
 ignore = E203, E266, E501, W503
 # line at 119 to compel with CTO's directives
