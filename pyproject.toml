@@ -1,0 +1,15 @@
+[tool.black]
+# line at 119 to compel with CTO's directives
+line-length = 119
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  | .mypy_cache
+  | .venv
+  | .git
+)/
+'''
+
+[tool.mypy]
+plugins = 'tinydb.mypy_plugin'

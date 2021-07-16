@@ -10,14 +10,14 @@ __pycache__/
 .vscode
 
 # flake8
-.flake8
-flake8_rapport/
+# .flake8
+# flake8_rapport/
 
 # mypy
 .mypy_cache
 
 # general conf (black, mypy)
-pyproject.toml
+# pyproject.toml
 
 # tinydb
 *.json
