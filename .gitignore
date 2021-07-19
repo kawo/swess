@@ -24,3 +24,6 @@ __pycache__/
 
 # logs
 logs/*.log
+
+# todo
+TODO
