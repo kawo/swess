@@ -1,9 +1,10 @@
+from views.base import View
 from rich.console import Console
 from rich.table import Table
 from rich import box
 
 
-class PlayerView:
+class PlayerView(View):
     def __init__(self) -> None:
         self.console = Console()
 
@@ -29,7 +30,7 @@ class PlayerView:
                 player["birthday"],
                 str(player["rating"]),
             )
-        self.console.print(table)
+        self.printToUser(table)
 
     def displaySortedByRating(self, value) -> None:
         """display all recorded players sorted by rating"""
@@ -49,4 +50,4 @@ class PlayerView:
                 player["birthday"],
                 str(player["rating"]),
             )
-        self.console.print(table)
+        self.printToUser(table)

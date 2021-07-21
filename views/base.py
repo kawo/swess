@@ -28,3 +28,13 @@ class View:
         table.add_row("5. Create a new tournament")
         table.add_row("6. Quit")
         self.console.print(table)
+
+    def printToUser(self, value):
+        print_value = value
+        console_print = self.console.print(print_value)  # type: ignore
+        return console_print
+
+    def askUser(self, value: str):
+        question_value = value
+        question = self.console.input(question_value)
+        return question

@@ -1,26 +1,16 @@
 import logging
 import sys
 
-from controllers.player import PlayerController
-from controllers.tournament import TournamentController
-from controllers.round import RoundController
-from controllers.match import MatchController
-
 from views.base import View
-
-from rich.console import Console
+from controllers.player import PlayerController
 
 
 class Controller:
     """Main Controller"""
 
     def __init__(self) -> None:
-        self.controller_player = PlayerController()
-        self.controller_tournament = TournamentController()
-        self.controller_round = RoundController()
-        self.controller_match = MatchController()
         self.view = View()
-        self.console = Console()
+        self.player_controller = PlayerController()
 
     def startApp(self):
         """Show Main Menu
@@ -32,11 +22,11 @@ class Controller:
         self.view.displayMainMenu()
         try:
             logging.info("Request user choice")
-            user_choice = self.console.input("Type a number from menu : ")
+            user_choice = self.view.askUser("Type a number from menu: ")
             logging.info(f"User choice: {user_choice}")
             return self.mainMenuChoice(user_choice)
         except KeyboardInterrupt:
-            self.console.print("\n[bold red]You ended the program with CTRL+C![/bold red]")
+            self.view.printToUser("\n[bold red]You ended the program with CTRL+C![/bold red]")
             logging.info("Program ended by CTRL+C")
 
     def mainMenuChoice(self, choice: str):
@@ -47,41 +37,19 @@ class Controller:
         """
         choice = choice
         if choice == "":
-            self.console.print("[bold red]You must type a number![/bold red]\n")
+            self.view.printToUser("[bold red]You must type a number![/bold red]\n")
             logging.warning("User input is empty")
             self.startApp()
         if choice == "1":
             logging.info("Calling view.displayAllPlayers()")
-            self.controller_player.showAllPlayers()
+            self.player_controller.showAllPlayers()
         if choice == "3":
             logging.info("Calling controller player.sortPlayersByRating()")
-            self.controller_player.sortPlayersByRating()
+            self.player_controller.sortPlayersByRating()
         if choice == "4":
             logging.info("Calling controller player.addPlayer()")
-            new_player = self.controller_player.addPlayer()
-            if new_player is False:
-                self.askRetry()
+            self.player_controller.addPlayer()
         if choice == "6":
-            self.console.print("Byyye!")
+            self.view.printToUser("Byyye!")
             logging.info("Program terminated by the user")
             sys.exit()
-
-    def askRetry(self):
-        """Ask user to retry Player creation"""
-        logging.info("Asking if user wants to retry creating a player")
-        ask = self.console.input("Retry? (y/n) : ")
-        if ask == "":
-            logging.warning("User input is empty")
-            self.console.print("You must answer with [Y]es or [N]o!")
-            self.askRetry()
-        if ask == "y":
-            logging.info("User said Yes")
-            new_player = self.controller_player.addPlayer()
-            if new_player is False:
-                self.askRetry()
-        if ask == "n":
-            logging.info("User said No")
-            logging.info("Returning to Main Menu...")
-            self.startApp()
-        else:
-            self.askRetry()
