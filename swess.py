@@ -1,5 +1,5 @@
+"""SWESS Chess Tournament Manager"""
 import logging
-
 from datetime import date
 
 from controllers.base import Controller
