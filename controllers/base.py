@@ -2,13 +2,14 @@
 import logging
 import sys
 
+import views.console
 from models.player import Player
-from views.console import View
 
 
 class Controller:
     def __init__(self) -> None:
-        self.view = View()
+        self.base_view = views.console.base.BaseView()
+        self.player_view = views.console.player.PlayerView()
 
     def startApp(self):
         """Show Main Menu
@@ -17,7 +18,7 @@ class Controller:
             Display Main Menu
         """
         logging.info("Calling view.displayMainMenu")
-        choice = self.view.displayMainMenu()
+        choice = self.base_view.displayMainMenu()
         self.getMainMenuChoice(choice)
 
     def getMainMenuChoice(self, choice: str):
@@ -28,7 +29,7 @@ class Controller:
         """
         choice = choice
         if choice == "":
-            self.view.printToUser("[bold red]You must type a number![/bold red]\n")
+            self.base_view.printToUser("[bold red]You must type a number![/bold red]\n")
             logging.warning("User input is empty")
             return self.startApp()
         if choice == "1":
@@ -41,7 +42,7 @@ class Controller:
             logging.info("Calling controller player.addPlayer()")
             return self.addPlayer()
         if choice == "6":
-            self.view.printToUser("Byyye!")
+            self.base_view.printToUser("Byyye!")
             logging.info("Program terminated by the user")
             return sys.exit()
         else:
@@ -49,28 +50,18 @@ class Controller:
             logging.warning("Returning to Main Menu...")
             return self.startApp()
 
-    def addPlayer(self):
-        """Create a new Player
+    def returnToMainMenu(self):
+        choice = self.base_view.askReturnToMainMenu()
+        if choice:
+            self.startApp()
 
-        Returns:
-            Player: a new created Player
-        """
-        logging.info("Asking First Name")
-        first_name = self.view.askUser("First Name: ")
-        logging.info(f"first_name = {first_name}")
-        logging.info("Asking Last Name")
-        last_name = self.view.askUser("Last Name: ")
-        logging.info(f"last_name = {last_name}")
-        logging.info("Asking Birthday")
-        birthday = self.view.askUser("Birthday (dd/mm/yyyy): ")
-        logging.info(f"birthday = {birthday}")
-        logging.info("Asking Gender")
-        gender = self.view.askUser("Gender (M or F): ")
-        logging.info(f"gender = {gender}")
-        logging.info("Asking Rating")
-        rating = self.view.askUser("Ranking (optional): ")
-        logging.info(f"rating = {rating}")
-        logging.info("Trying to create Player instance...")
+    def addPlayer(self):
+        player = self.player_view.displayAddPlayer()
+        first_name = player["first_name"]
+        last_name = player["last_name"]
+        birthday = player["birthday"]
+        gender = player["gender"]
+        rating = player["rating"]
         try:
             if rating:
                 new_player = Player(first_name, last_name, birthday, gender, int(rating))
@@ -81,68 +72,37 @@ class Controller:
             if new_player.addToDb(new_player):
                 logging.info("Player successfully inserted in database!")
                 if rating:
-                    self.view.printToUser(
+                    self.base_view.printToUser(
                         f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of {rating} added in database![/bold green]"
                     )
                 else:
-                    self.view.printToUser(
+                    self.base_view.printToUser(
                         f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of 0 added in database![/bold green]"
                     )
             else:
                 logging.error("Can not insert player in database !")
-                return self.askRetryAddPlayer()
+                retry = self.player_view.askRetryAddPlayer()
+                if retry:
+                    return self.addPlayer()
+                else:
+                    return self.startApp()
         except (TypeError, ValueError):
             logging.error("Can not create player!")
-            return self.askRetryAddPlayer()
-
-    def askRetryAddPlayer(self):
-        """Ask user to retry Player creation"""
-        logging.info("Asking if user wants to retry creating a player")
-        ask = self.view.askUser("Retry? (y/n): ")
-        if ask == "":
-            logging.warning("User input is empty")
-            self.view.printToUser("You must answer with [Y]es or [N]o!")
-            self.askRetryAddPlayer()
-        if ask == "y":
-            logging.info("User said Yes")
-            new_player = self.addPlayer()
-            if new_player is False:
-                self.askRetryAddPlayer()
-        if ask == "n":
-            logging.info("User said No")
-            logging.info("Returning to Main Menu...")
-            self.view.printToUser("\n")
-            self.startApp()
-        else:
-            self.askRetryAddPlayer()
-
-    def askReturnToMainMenu(self):
-        """Ask user to return to Main Menu"""
-        logging.info("Asking if user wants to return to Main Menu")
-        ask = self.view.askUser("Return to Main Menu? (y/n): ")
-        if ask == "":
-            logging.warning("User input is empty")
-            self.view.printToUser("You must answer with [Y]es or [N]o!")
-            return self.askReturnToMainMenu()
-        if ask == "y":
-            logging.info("User said Yes")
-            return self.startApp()
-        if ask == "n":
-            logging.info("User said No")
-            logging.info("Asking again...")
-            return self.askReturnToMainMenu()
-        else:
-            return self.askReturnToMainMenu()
+            retry = self.player_view.askRetryAddPlayer()
+            if retry:
+                return self.addPlayer()
+            else:
+                return self.startApp()
 
     def showAllPlayers(self):
         """ask model for all the players"""
         players = Player.getAllPlayers(self)
-        self.view.displayAllPlayers(players)
-        return self.askReturnToMainMenu()
+        self.player_view.displayAllPlayers(players)
+        return self.returnToMainMenu()
 
     def sortPlayersByRating(self):
         """sort players by rating"""
         players = Player.getAllPlayers(self)
         players_sorted = sorted(players, key=lambda player: player["rating"], reverse=True)
-        self.view.displaySortedByRating(players_sorted)
-        return self.askReturnToMainMenu()
+        self.player_view.displaySortedByRating(players_sorted)
+        return self.returnToMainMenu()

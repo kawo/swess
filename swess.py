@@ -2,7 +2,7 @@
 import logging
 from datetime import date
 
-from controllers.base import Controller
+import controllers
 
 today = date.today().strftime("%d-%m-%Y")
 
@@ -19,7 +19,7 @@ logging.basicConfig(
 def main():
     """main loop"""
     logging.info("App started...")
-    swess = Controller()
+    swess = controllers.base.Controller()
     swess.startApp()
     logging.info("App finished.")
 
