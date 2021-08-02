@@ -1,11 +1,11 @@
-from models.validator import String, OneOf, Date, IntPositive
 from models.database import Database
+from models.validator import Date, IntPositive, OneOf, String
 
 
 class Player:
 
-    first_name = String(minsize=3, maxsize=30, name="Prénom")
-    last_name = String(minsize=3, maxsize=30, name="Nom")
+    first_name = String(minsize=3, maxsize=30, name="First Name")
+    last_name = String(minsize=3, maxsize=30, name="Last Name")
     gender = OneOf("Gender", "M", "F")
     birthday = Date("Birthday", "%d/%m/%Y")
     rating = IntPositive("Ranking")

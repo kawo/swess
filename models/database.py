@@ -1,8 +1,8 @@
-import tinydb
-from tinydb.queries import where
-from rich.console import Console
-
 import logging
+
+import tinydb
+from rich.console import Console
+from tinydb.queries import where
 
 
 class Database:
@@ -81,3 +81,39 @@ class Database:
         logging.info("Getting all players from database...")
         players = self.players_table.all()
         return players
+
+    def serializeTournament(self, value) -> dict:
+        """Serialize tournament for database insert
+
+        Args:
+            value (Tournament): tournament object.
+
+        Returns:
+            dict: return a tournament in dict format.
+        """
+        logging.info("Serializing tournament...")
+        self.tournament = value
+        serialized_tournament = {
+            "name": self.tournament.name,
+            "location": self.tournament.location,
+            "rounds": self.tournament.rounds,
+            "time_type": self.tournament.time_type,
+            "description": self.tournament.description,
+        }
+        return serialized_tournament
+
+    def registerTournament(self, value: object) -> bool:
+        """Register new tournament to database
+
+        Args:
+            value (Tournament): Tournament object to insert.
+        """
+        insert = False
+        self.value = self.serializeTournament(value)
+        if self.tournament_table.insert(self.value):
+            logging.info("Tournament registered in database!")
+            insert = True
+        else:
+            logging.warning("Tournament not registered in database!")
+            insert = False
+        return insert
