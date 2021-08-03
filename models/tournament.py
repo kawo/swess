@@ -1,5 +1,5 @@
 from models.database import Database
-from models.validator import IntPositive, OneOf, String
+from models.validator import Date, IntPositive, OneOf, String
 
 
 class Tournament:
@@ -9,13 +9,15 @@ class Tournament:
     description = String(minsize=10, maxsize=500, name="Description")
     time_type = OneOf("Time Type", "bullet", "blitz", "rapid")
     rounds = IntPositive("Rounds")
+    date = Date("Date", "%d/%m/%Y")
 
-    def __init__(self, name: str, location: str, time_type: str, description: str, rounds: int = 4) -> None:
+    def __init__(self, name: str, location: str, time_type: str, description: str, date: str, rounds: int = 4) -> None:
         self.name = name
         self.location = location
         self.rounds = rounds
         self.time_type = time_type
         self.description = description
+        self.date = date
 
     def addToDb(self, value) -> bool:
         """Register tournament to database
@@ -30,3 +32,9 @@ class Tournament:
         self.db = Database()
         self.register_tournament = self.db.registerTournament(self.tournament)
         return self.register_tournament
+
+    def getAllTournaments(self):
+        """Get all registered tournaments from database"""
+        self.db = Database()
+        all_tournaments = self.db.getAll("tournaments")
+        return all_tournaments

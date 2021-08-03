@@ -64,31 +64,35 @@ class Controller:
             return self.startApp()
 
     def showTournamentLogs(self):
-        return self.tournament_view.displayTournamentLogs()
+        """Ask model for all registered tournaments"""
+        tournament = Tournament.getAllTournaments(self)
+        self.tournament_view.displayTournamentLogs(tournament)
+        return self.returnToMainMenu()
 
     def createNewTournament(self):
         tournament = self.tournament_view.displayNewTournament()
         name = tournament["name"]
         location = tournament["location"]
+        date = tournament["date"]
         rounds = tournament["rounds"]
         time_type = tournament["time_type"]
         description = tournament["description"]
         try:
             if rounds:
-                new_tournament = Tournament(name, location, time_type, description, int(rounds))
+                new_tournament = Tournament(name, location, time_type, description, date, int(rounds))
             else:
-                new_tournament = Tournament(name, location, time_type, description)
+                new_tournament = Tournament(name, location, time_type, description, date)
             logging.info("Tournament successfully created!")
             logging.info("Trying to register tournament to database...")
             if new_tournament.addToDb(new_tournament):
                 logging.info("Tournament successfully registered in database!")
                 if rounds:
                     self.base_view.printToUser(
-                        f"[bold green]Tournament {name!r} at {location!r} with {rounds!r} rounds and {time_type!r} time type\nDescription: {description!r}\nRegistered in database![/bold green]"
+                        f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: {rounds!r}\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]"
                     )
                 else:
                     self.base_view.printToUser(
-                        f"[bold green]Tournament {name!r} at {location!r} with 4 rounds and {time_type!r} time type\nDescription: {description!r}\nRegistered in database![/bold green]"
+                        f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: '4'\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]"
                     )
             else:
                 logging.error("Can not register tournament in database!")
@@ -147,7 +151,8 @@ class Controller:
     def showAllPlayers(self):
         """ask model for all the players"""
         players = Player.getAllPlayers(self)
-        return self.player_view.displayAllPlayers(players)
+        self.player_view.displayAllPlayers(players)
+        return self.returnToMainMenu()
 
     def sortPlayersByRating(self):
         """sort players by rating"""

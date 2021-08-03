@@ -9,7 +9,7 @@ class Database:
     def __init__(self) -> None:
         self.db = tinydb.TinyDB("db.json", ensure_ascii=False)
         self.players_table = self.db.table("players")
-        self.tournament_table = self.db.table("tournament")
+        self.tournament_table = self.db.table("tournaments")
         self.console = Console()
 
     def serializePlayer(self, value) -> dict:
@@ -76,11 +76,17 @@ class Database:
                 insert = False
         return insert
 
-    def getAll(self):
-        """Get all players from database"""
-        logging.info("Getting all players from database...")
-        players = self.players_table.all()
-        return players
+    def getAll(self, value: str):
+        table = value
+        if table == "players":
+            logging.info("Getting all players from database...")
+            result = self.players_table.all()
+        if table == "tournaments":
+            logging.info("Getting all tournaments from database...")
+            result = self.tournament_table.all()
+        else:
+            logging.error(f"{table} does not exists!")
+        return result
 
     def serializeTournament(self, value) -> dict:
         """Serialize tournament for database insert
@@ -99,6 +105,7 @@ class Database:
             "rounds": self.tournament.rounds,
             "time_type": self.tournament.time_type,
             "description": self.tournament.description,
+            "date": self.tournament.date,
         }
         return serialized_tournament
 

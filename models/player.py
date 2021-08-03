@@ -43,7 +43,7 @@ class Player:
     def getAllPlayers(self):
         """get all the players from the database"""
         self.db = Database()
-        all_players = self.db.getAll()
+        all_players = self.db.getAll("players")
         return all_players
 
     def modifyFirstName(self, value: str):

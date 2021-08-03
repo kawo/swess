@@ -6,8 +6,31 @@ from views.console.base import BaseView
 
 
 class TournamentView(BaseView):
-    def displayTournamentLogs(self):
-        pass
+    def displayTournamentLogs(self, value):
+        """Display all registered tournaments"""
+
+        self.tournaments_list = value
+        table = Table(
+            show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nList of all tournaments", box=box.SIMPLE
+        )
+        table.add_column("Id")
+        table.add_column("Name")
+        table.add_column("Location")
+        table.add_column("Date")
+        table.add_column("Rounds")
+        table.add_column("Time Type")
+        table.add_column("Description")
+        for tournament in self.tournaments_list:
+            table.add_row(
+                str(tournament.doc_id),
+                tournament["name"],
+                tournament["location"],
+                tournament["date"],
+                str(tournament["rounds"]),
+                tournament["time_type"],
+                tournament["description"],
+            )
+        return self.printToUser(table)
 
     def displayNewTournament(self):
         tournament = {}
@@ -19,6 +42,10 @@ class TournamentView(BaseView):
         location = self.askUser("Location: ")
         tournament["location"] = location
         logging.info(f"location = {location}")
+        logging.info("Asking Date")
+        date = self.askUser("Date (dd/mm/yyyy): ")
+        tournament["date"] = date
+        logging.info(f"date = {date}")
         logging.info("Asking Round Numbers")
         rounds = self.askUser("Number of rounds (default: 4): ")
         tournament["rounds"] = rounds
