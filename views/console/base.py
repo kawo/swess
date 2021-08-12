@@ -38,15 +38,10 @@ class BaseView:
         table.add_row("5. Create a new tournament")
         table.add_row("6. Quit")
         self.console.print(table)
-        try:
-            logging.info("Request user choice")
-            user_choice = self.askUser("Type a number from menu: ")
-            logging.info(f"User choice: {user_choice}")
-            return user_choice
-        except KeyboardInterrupt:
-            self.printToUser("\n[bold red]You ended the program with CTRL+C![/bold red]")
-            logging.info("Program ended by CTRL+C")
-            return sys.exit()
+        logging.info("Request user choice")
+        user_choice = self.askUser("Type a number from menu: ")
+        logging.info(f"User choice: {user_choice}")
+        return user_choice
 
     def askReturnToMainMenu(self):
         """Ask user to return to Main Menu"""
