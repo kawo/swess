@@ -2,16 +2,18 @@
 import logging
 import sys
 
-import views.console
 from models.player import Player
 from models.tournament import Tournament
+from views.console.base import BaseView
+from views.console.player import PlayerView
+from views.console.tournament import TournamentView
 
 
 class Controller:
     def __init__(self) -> None:
-        self.base_view = views.console.base.BaseView()
-        self.player_view = views.console.player.PlayerView()
-        self.tournament_view = views.console.tournament.TournamentView()
+        self.base_view = BaseView()
+        self.player_view = PlayerView()
+        self.tournament_view = TournamentView()
 
     def startApp(self):
         """Show Main Menu
@@ -35,21 +37,24 @@ class Controller:
             logging.warning("User input is empty")
             return self.startApp()
         if choice == "1":
-            logging.info("Calling controller showAllPlayers()")
+            logging.info("Displaying all players")
             return self.showAllPlayers()
         if choice == "2":
-            logging.info("Calling controller showTournamentLogs()")
-            return self.showTournamentLogs()
-        if choice == "3":
-            logging.info("Calling controller sortPlayersByRating()")
+            logging.info("Displaying ranking")
             return self.sortPlayersByRating()
+        if choice == "3":
+            logging.info("Displaying tournaments logs")
+            return self.showTournamentLogs()
         if choice == "4":
-            logging.info("Calling controller addPlayer()")
-            return self.addPlayer()
+            logging.info("Displaying current opened tournaments")
+            return self.showCurrentTournaments()
         if choice == "5":
-            logging.info("Calling controller createNewTournament()")
-            return self.createNewTournament()
+            logging.info("Creating new player")
+            return self.addPlayer()
         if choice == "6":
+            logging.info("Creating new tournament")
+            return self.createNewTournament()
+        if choice == "7":
             self.base_view.printToUser("Byyye!")
             logging.info("Program terminated by the user")
             return sys.exit()
@@ -86,14 +91,7 @@ class Controller:
             logging.info("Trying to register tournament to database...")
             if new_tournament.addToDb(new_tournament):
                 logging.info("Tournament successfully registered in database!")
-                if rounds:
-                    self.base_view.printToUser(
-                        f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: {rounds!r}\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]"
-                    )
-                else:
-                    self.base_view.printToUser(
-                        f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: '4'\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]"
-                    )
+                return self.tournament_view.tournamentAdded(tournament)
             else:
                 logging.error("Can not register tournament in database!")
                 retry = self.tournament_view.askRetryNewTournament()
@@ -125,14 +123,7 @@ class Controller:
             logging.info("Trying to add player to database...")
             if new_player.addToDb(new_player):
                 logging.info("Player successfully inserted in database!")
-                if rating:
-                    self.base_view.printToUser(
-                        f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of {rating} added in database![/bold green]"
-                    )
-                else:
-                    self.base_view.printToUser(
-                        f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of 0 added in database![/bold green]"
-                    )
+                return self.player_view.playerAdded(player)
             else:
                 logging.error("Can not insert player in database!")
                 retry = self.player_view.askRetryAddPlayer()
@@ -160,3 +151,6 @@ class Controller:
         players_sorted = sorted(players, key=lambda player: player["rating"], reverse=True)
         self.player_view.displaySortedByRating(players_sorted)
         return self.returnToMainMenu()
+
+    def showCurrentTournaments(self):
+        pass

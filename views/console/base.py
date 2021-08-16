@@ -1,6 +1,5 @@
 """Console View"""
 import logging
-import sys
 
 from rich import box
 from rich.console import Console
@@ -32,11 +31,12 @@ class BaseView:
         )
         table.add_column("Main Menu")
         table.add_row("1. Display all players")
-        table.add_row("2. Display tournaments logs")
-        table.add_row("3. Display ranking")
-        table.add_row("4. Create a new player")
-        table.add_row("5. Create a new tournament")
-        table.add_row("6. Quit")
+        table.add_row("2. Display ranking")
+        table.add_row("3. Display tournaments logs")
+        table.add_row("4. Show current opened tournaments")
+        table.add_row("5. Create a new player")
+        table.add_row("6. Create a new tournament")
+        table.add_row("7. Quit")
         self.console.print(table)
         logging.info("Request user choice")
         user_choice = self.askUser("Type a number from menu: ")

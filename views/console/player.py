@@ -97,3 +97,14 @@ class PlayerView(BaseView):
             return False
         else:
             self.askRetryAddPlayer()
+
+    def playerAdded(self, value):
+        first_name = value["first_name"]
+        last_name = value["last_name"]
+        gender = value["gender"]
+        birthday = value["birthday"]
+        rating = value["rating"]
+        if rating:
+            self.printToUser(f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of {rating} added in database![/bold green]")
+        else:
+            self.printToUser(f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of 0 added in database![/bold green]")

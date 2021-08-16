@@ -4,7 +4,7 @@ import signal
 import sys
 from datetime import date
 
-import controllers
+from controllers.base import Controller
 from views.console.base import BaseView
 
 today = date.today().strftime("%d-%m-%Y")
@@ -38,7 +38,7 @@ def manualExit(signal, frame):
 def main():
     """main loop"""
     logging.info("App started...")
-    swess = controllers.base.Controller()
+    swess = Controller()
     swess.startApp()
     logging.info("App finished.")
 
