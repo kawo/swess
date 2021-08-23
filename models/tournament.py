@@ -1,3 +1,5 @@
+import logging
+
 from models.database import Database
 from models.validator import Date, IntPositive, OneOf, String
 
@@ -11,13 +13,16 @@ class Tournament:
     rounds = IntPositive("Rounds")
     date = Date("Date", "%d/%m/%Y")
 
-    def __init__(self, name: str, location: str, time_type: str, description: str, date: str, rounds: int = 4) -> None:
+    def __init__(self, name: str, location: str, time_type: str, description: str, date: str, rounds: int = 4, players: list[str] = [], games: list[str] = [], end_date: str = None) -> None:
         self.name = name
         self.location = location
         self.rounds = rounds
         self.time_type = time_type
         self.description = description
         self.date = date
+        self.players = players
+        self.games = games
+        self.end_date = end_date
 
     def addToDb(self, value) -> bool:
         """Register tournament to database
@@ -38,3 +43,12 @@ class Tournament:
         self.db = Database()
         all_tournaments = self.db.getAll("tournaments")
         return all_tournaments
+
+    def addPlayers(self, value):
+        players = value
+        self.db = Database()
+        result = self.db.addPlayers(players)
+        if result:
+            logging.info("Players added to tournament!")
+        else:
+            logging.error("Players not added to tournaments!")

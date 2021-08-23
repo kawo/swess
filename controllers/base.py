@@ -91,7 +91,7 @@ class Controller:
             logging.info("Trying to register tournament to database...")
             if new_tournament.addToDb(new_tournament):
                 logging.info("Tournament successfully registered in database!")
-                return self.tournament_view.tournamentAdded(tournament)
+                return self.addPlayersToTournament()
             else:
                 logging.error("Can not register tournament in database!")
                 retry = self.tournament_view.askRetryNewTournament()
@@ -99,13 +99,19 @@ class Controller:
                     return self.createNewTournament()
                 else:
                     return self.startApp()
-        except (TypeError, ValueError):
+        except (ValueError):
             logging.error("Can not create tournament!")
             retry = self.tournament_view.askRetryNewTournament()
             if retry:
                 return self.createNewTournament()
             else:
                 return self.startApp()
+
+    def addPlayersToTournament(self):
+        players_list = Player.getAllPlayers(self)
+        self.player_view.displayAllPlayers(players_list)
+        players = self.tournament_view.addPlayers()
+        return Tournament.addPlayers(self, players)
 
     def addPlayer(self):
         player = self.player_view.displayAddPlayer()

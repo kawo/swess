@@ -81,12 +81,14 @@ class Database:
         if table == "players":
             logging.info("Getting all players from database...")
             result = self.players_table.all()
+            return result
         if table == "tournaments":
             logging.info("Getting all tournaments from database...")
             result = self.tournament_table.all()
+            return result
         else:
-            logging.error(f"{table} does not exists!")
-        return result
+            logging.error(f"{table} table does not exists!")
+            return None
 
     def serializeTournament(self, value) -> dict:
         """Serialize tournament for database insert
@@ -106,6 +108,9 @@ class Database:
             "time_type": self.tournament.time_type,
             "description": self.tournament.description,
             "date": self.tournament.date,
+            "games": self.tournament.games,
+            "end_date": self.tournament.end_date,
+            "players": self.tournament.players
         }
         return serialized_tournament
 
@@ -123,4 +128,29 @@ class Database:
         else:
             logging.warning("Tournament not registered in database!")
             insert = False
+        logging.info(f"Insert: {insert}")
         return insert
+
+    def addPlayers(self, value) -> bool:
+        players = value
+        players_exists = self.checkPlayerID(players)
+        if players_exists:
+            last_tournament = self.tournament_table.get(doc_id=len(self.db))
+            self.tournament_table.update({'players': players}, doc_ids=last_tournament)
+            return players_exists
+        else:
+            return players_exists
+
+    def checkPlayerID(self, value) -> bool:
+        players = value
+        player_exists = True
+        for player in players:
+            logging.info(f"Checking Player ID: {player}")
+            check_id = self.players_table.contains(doc_id=int(player))
+            logging.info(f"{check_id}")
+            if check_id:
+                logging.info(f"Player ID {player} exists!")
+            else:
+                player_exists = False
+                logging.error(f"Player ID {player} does not exists!")
+        return player_exists

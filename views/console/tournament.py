@@ -61,6 +61,20 @@ class TournamentView(BaseView):
         logging.info("Trying to create Tournament instance...")
         return tournament
 
+    def addPlayers(self):
+        players = []
+        logging.info("Asking for players list")
+        self.printToUser("Add 8 players:")
+        for i in range(8):
+            player = self.askUser(f"Player {i+1}: ")
+            players.append(player)
+        if any(players.count(player) > 1 for player in players):
+            logging.error("Duplicates found in players!")
+            self.printToUser("[bold red]You can not have duplicate players![/bold red]")
+            return self.addPlayers()
+        logging.info(f"players = {players}")
+        return players
+
     def askRetryNewTournament(self):
         """Ask user to retry Tournament creation"""
         logging.info("Asking if user wants to retry creating a tournament")
