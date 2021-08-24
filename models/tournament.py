@@ -44,6 +44,11 @@ class Tournament:
         all_tournaments = self.db.getAll("tournaments")
         return all_tournaments
 
+    def getAllOpenedTournaments(self):
+        self.db = Database()
+        opened_tournament = self.db.getOpenedTournaments()
+        return opened_tournament
+
     def addPlayers(self, value):
         players = value
         self.db = Database()
@@ -52,3 +57,7 @@ class Tournament:
             logging.info("Players added to tournament!")
         else:
             logging.error("Players not added to tournaments!")
+
+    def delTournaments(self):
+        self.db = Database()
+        self.db.tournament_table.truncate()

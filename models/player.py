@@ -1,3 +1,5 @@
+import logging
+
 from models.database import Database
 from models.validator import Date, IntPositive, OneOf, String
 
@@ -26,7 +28,7 @@ class Player:
         self.gender = gender
         self.rating = rating
 
-    def addToDb(self, value) -> bool:
+    def addToDb(self, value, serialize: bool = True) -> bool:
         """Add player to database
 
         Args:
@@ -36,8 +38,14 @@ class Player:
             bool: return True if player is added to database
         """
         self.player = value
+        self.serialize = serialize
         self.db = Database()
-        self.insert_player = self.db.insertPlayer(self.player)
+        if self.serialize:
+            logging.info(f"serialize = {serialize}")
+            self.insert_player = self.db.insertPlayer(self.player, True)
+        else:
+            logging.info(f"serialize = {serialize}")
+            self.insert_player = self.db.insertPlayer(self.player, False)
         return self.insert_player
 
     def getAllPlayers(self):
@@ -63,6 +71,25 @@ class Player:
 
     def delete(self, value: int):
         pass
+
+    def dummyData(self):
+        players = [
+            {"first_name": "Piers", "last_name": "Kelly", "gender": "M", "birthday": "10/09/1980", "rating": 1500},
+            {"first_name": "Rose", "last_name": "Lawrence", "gender": "F", "birthday": "08/01/1984", "rating": 0},
+            {"first_name": "Joseph", "last_name": "James", "gender": "M", "birthday": "23/04/1978", "rating": 1000},
+            {"first_name": "Bernadette", "last_name": "Dyer", "gender": "F", "birthday": "01/11/1992", "rating": 2000},
+            {"first_name": "Lisa", "last_name": "Mackenzie", "gender": "F", "birthday": "12/06/1987", "rating": 500},
+            {"first_name": "Luke", "last_name": "Hill", "gender": "M", "birthday": "18/10/1990", "rating": 1800},
+            {"first_name": "Jonathan", "last_name": "Bond", "gender": "M", "birthday": "28/12/1972", "rating": 2100},
+            {"first_name": "Jason", "last_name": "Paterson", "gender": "M", "birthday": "20/01/1983", "rating": 1500},
+            {"first_name": "Sonia", "last_name": "Davidson", "gender": "F", "birthday": "19/11/1986", "rating": 1200},
+            {"first_name": "Stephen", "last_name": "McLean", "gender": "M", "birthday": "28/06/1996", "rating": 2800}
+        ]
+        self.db = Database()
+        self.db.players_table.truncate()
+        for player in players:
+            logging.info(f"{player}")
+            Player.addToDb(self, player, False)
 
     def __str__(self) -> str:
         return f"Player: {self.first_name} {self.last_name}, {self.gender} gender, born on {self.birthday} with a ranking of {self.rating}."

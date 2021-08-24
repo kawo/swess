@@ -58,6 +58,12 @@ class Controller:
             self.base_view.printToUser("Byyye!")
             logging.info("Program terminated by the user")
             return sys.exit()
+        if choice == "8":
+            logging.info("Generating dummy data for testing purpose...")
+            return self.generateDummyData()
+        if choice == "9":
+            logging.info("Deleting ALL tournaments data...")
+            return self.deleteAllTournaments()
         else:
             logging.warning("User input is wrong")
             logging.warning("Returning to Main Menu...")
@@ -111,7 +117,8 @@ class Controller:
         players_list = Player.getAllPlayers(self)
         self.player_view.displayAllPlayers(players_list)
         players = self.tournament_view.addPlayers()
-        return Tournament.addPlayers(self, players)
+        Tournament.addPlayers(self, players)
+        return self.showTournamentLogs()
 
     def addPlayer(self):
         player = self.player_view.displayAddPlayer()
@@ -159,4 +166,14 @@ class Controller:
         return self.returnToMainMenu()
 
     def showCurrentTournaments(self):
-        pass
+        opened_tournament = Tournament.getAllOpenedTournaments(self)
+        self.tournament_view.displayTournamentLogs(opened_tournament)
+        return self.returnToMainMenu()
+
+    def generateDummyData(self):
+        Player.dummyData(self)
+        return self.showAllPlayers()
+
+    def deleteAllTournaments(self):
+        Tournament.delTournaments(self)
+        return self.showTournamentLogs()

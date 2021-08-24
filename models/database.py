@@ -59,14 +59,20 @@ class Database:
             check = False
         return check
 
-    def insertPlayer(self, value: object) -> bool:
+    def insertPlayer(self, value, serialize: bool) -> bool:
         """insert a player to the database
 
         Args:
             value (Player): Player object to insert.
         """
         insert = False
-        self.value = self.serializePlayer(value)
+        serialize = serialize
+        logging.info(f"serialize = {serialize}")
+        if serialize:
+            logging.info(f"serialize = {serialize}")
+            self.value = self.serializePlayer(value)
+        else:
+            self.value = value
         if self.checkPlayerExists(self.value) is False:
             if self.players_table.insert(self.value):
                 logging.info("Player inserted in database!")
@@ -89,6 +95,15 @@ class Database:
         else:
             logging.error(f"{table} table does not exists!")
             return None
+
+    def getOpenedTournaments(self):
+        opened_tournaments = []
+        tournaments = self.tournament_table.all()
+        for tournament in tournaments:
+            end_date = tournament["end_date"]
+            if end_date is None:
+                opened_tournaments.append(tournament)
+        return opened_tournaments
 
     def serializeTournament(self, value) -> dict:
         """Serialize tournament for database insert

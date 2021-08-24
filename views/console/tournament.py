@@ -17,6 +17,7 @@ class TournamentView(BaseView):
         table.add_column("Name")
         table.add_column("Location")
         table.add_column("Date")
+        table.add_column("End Date")
         table.add_column("Rounds")
         table.add_column("Time Type")
         table.add_column("Description")
@@ -26,6 +27,7 @@ class TournamentView(BaseView):
                 tournament["name"],
                 tournament["location"],
                 tournament["date"],
+                tournament['end_date'],
                 str(tournament["rounds"]),
                 tournament["time_type"],
                 tournament["description"],
@@ -67,7 +69,11 @@ class TournamentView(BaseView):
         self.printToUser("Add 8 players:")
         for i in range(8):
             player = self.askUser(f"Player {i+1}: ")
-            players.append(player)
+            if player == "":
+                self.printToUser("[bold red]You must enter an ID![/bold red]")
+                return self.addPlayers()
+            else:
+                players.append(player)
         if any(players.count(player) > 1 for player in players):
             logging.error("Duplicates found in players!")
             self.printToUser("[bold red]You can not have duplicate players![/bold red]")
