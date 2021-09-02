@@ -8,7 +8,7 @@ from views.console.base import BaseView
 class TournamentView(BaseView):
     def displayTournamentLogs(self, value):
         """Display all registered tournaments"""
-
+        self.console.clear()
         self.tournaments_list = value
         table = Table(
             show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nList of all tournaments", box=box.SIMPLE
@@ -35,6 +35,7 @@ class TournamentView(BaseView):
         return self.printToUser(table)
 
     def displayNewTournament(self):
+        self.console.clear()
         tournament = {}
         logging.info("Asking for Tournament Name")
         name = self.askUser("Tournament Name: ")

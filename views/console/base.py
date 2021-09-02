@@ -23,6 +23,7 @@ class BaseView:
     def displayMainMenu(self):
         """Display the Main Menu"""
         logging.info("View.displayMainMenu")
+        self.console.clear()
         table = Table(
             show_header=True,
             header_style="bold",

@@ -8,7 +8,7 @@ from views.console.base import BaseView
 class PlayerView(BaseView):
     def displayAllPlayers(self, value) -> None:
         """display all recorded players"""
-
+        self.console.clear()
         self.players_list = value
         table = Table(
             show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nList of all players", box=box.SIMPLE
@@ -32,7 +32,7 @@ class PlayerView(BaseView):
 
     def displaySortedByRating(self, value) -> None:
         """display all recorded players sorted by rating"""
-
+        self.console.clear()
         self.sorted_players = value
         table = Table(show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nPlayers Ranking", box=box.SIMPLE)
         table.add_column("Last Name")
@@ -56,6 +56,7 @@ class PlayerView(BaseView):
         Returns:
             Player: a new created Player
         """
+        self.console.clear()
         player = {}
         logging.info("Asking First Name")
         first_name = self.askUser("First Name: ")
