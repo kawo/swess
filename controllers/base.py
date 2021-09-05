@@ -270,9 +270,9 @@ class Controller:
         for player in tournament["players"]:
             logging.info(f"Player: {player}")
             players.append(Player.getPlayerById(self, player))
-        players_sorted = sorted(players, key=lambda player: player["rating"], reverse=True)
         first_round = Round()
-        return first_round.pairPlayers(players_sorted, True)
+        paired_players = first_round.pairPlayers(players, True)
+        return self.tournament_view.displayFirstRound(paired_players)
 
     def computeNextRound(self, id):
         pass

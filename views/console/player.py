@@ -28,18 +28,16 @@ class PlayerView(BaseView):
                 player["birthday"],
                 str(player["rating"]),
             )
-        table.add_row("", "", "", "", "", "")
-        table.add_row("1. View/modify player", "", "", "", "", "")
-        table.add_row("2. Return to Main Menu", "", "", "", "", "")
-        return self.printToUser(table)
+        self.printToUser(table, justify="center")
+        self.printToUser("1. View/modify player")
+        self.printToUser("2. Return to Main Menu")
+        self.printToUser("\n")
 
     def displayPlayer(self, player) -> None:
         """display all recorded players"""
         self.console.clear()
         player = player
-        table = Table(
-            show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nPlayer details", box=box.SIMPLE
-        )
+        table = Table(show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nPlayer details", box=box.SIMPLE)
         table.add_column("Last Name")
         table.add_column("First Name")
         table.add_column("Gender")
@@ -52,10 +50,10 @@ class PlayerView(BaseView):
             player["birthday"],
             str(player["rating"]),
         )
-        table.add_row("", "", "", "", "")
-        table.add_row("1. Modify ranking", "", "", "", "")
-        table.add_row("2. Return to Main Menu", "", "", "", "")
-        return self.printToUser(table)
+        self.printToUser(table, justify="center")
+        self.printToUser("1. Modify ranking")
+        self.printToUser("2. Return to Main Menu")
+        self.printToUser("\n")
 
     def askNewRanking(self):
         ranking = self.askUser("New ranking: ")
@@ -81,10 +79,10 @@ class PlayerView(BaseView):
                 player["birthday"],
                 str(player["rating"]),
             )
-        table.add_row("", "", "", "", "", "")
-        table.add_row("1. View/modify player", "", "", "", "", "")
-        table.add_row("2. Return to Main Menu", "", "", "", "", "")
-        return self.printToUser(table)
+        self.printToUser(table, justify="center")
+        self.printToUser("1. View/modify player")
+        self.printToUser("2. Return to Main Menu")
+        self.printToUser("\n")
 
     def displayAddPlayer(self) -> dict:
         """Create a new Player
@@ -142,6 +140,10 @@ class PlayerView(BaseView):
         birthday = value["birthday"]
         rating = value["rating"]
         if rating:
-            self.printToUser(f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of {rating} added in database![/bold green]")
+            self.printToUser(
+                f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of {rating} added in database![/bold green]"
+            )
         else:
-            self.printToUser(f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of 0 added in database![/bold green]")
+            self.printToUser(
+                f"[bold green]Player: {first_name} {last_name}, {gender} gender, born on {birthday} with a ranking of 0 added in database![/bold green]"
+            )

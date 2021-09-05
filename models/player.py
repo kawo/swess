@@ -92,7 +92,7 @@ class Player:
             {"first_name": "Jonathan", "last_name": "Bond", "gender": "M", "birthday": "28/12/1972", "rating": 2100},
             {"first_name": "Jason", "last_name": "Paterson", "gender": "M", "birthday": "20/01/1983", "rating": 1500},
             {"first_name": "Sonia", "last_name": "Davidson", "gender": "F", "birthday": "19/11/1986", "rating": 1200},
-            {"first_name": "Stephen", "last_name": "McLean", "gender": "M", "birthday": "28/06/1996", "rating": 2800}
+            {"first_name": "Stephen", "last_name": "McLean", "gender": "M", "birthday": "28/06/1996", "rating": 2800},
         ]
         self.db = Database()
         self.db.players_table.truncate()

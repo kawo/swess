@@ -27,15 +27,15 @@ class TournamentView(BaseView):
                 tournament["name"],
                 tournament["location"],
                 tournament["date"],
-                tournament['end_date'],
+                tournament["end_date"],
                 str(tournament["rounds"]),
                 tournament["time_type"],
                 tournament["description"],
             )
-        table.add_row("", "", "", "", "", "", "", "")
-        table.add_row("1. Choose a Tournament", "", "", "", "", "", "", "")
-        table.add_row("2. Return to Main Menu", "", "", "", "", "" , "", "", "")
-        return self.printToUser(table)
+        self.printToUser(table, justify="center")
+        self.printToUser("1. Choose a Tournament")
+        self.printToUser("2. Return to Main Menu")
+        self.printToUser("\n")
 
     def displayNewTournament(self):
         self.console.clear()
@@ -111,9 +111,13 @@ class TournamentView(BaseView):
         time_type = value["time_type"]
         description = value["description"]
         if rounds:
-            self.printToUser(f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: {rounds!r}\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]")
+            self.printToUser(
+                f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: {rounds!r}\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]"
+            )
         else:
-            self.printToUser(f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: '4'\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]")
+            self.printToUser(
+                f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: '4'\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]"
+            )
 
     def displayTournament(self, tournament, players) -> None:
         """display choosed tournament"""
@@ -143,8 +147,35 @@ class TournamentView(BaseView):
         table.add_row("", "", "", "Players list", "", "", "")
         table.add_row("", "", "", "", "", "", "")
         for player in players:
-            table.add_row("", player["first_name"], player["last_name"], player["gender"], player["birthday"], str(player["rating"]), "")
-        table.add_row("", "", "", "", "", "", "")
-        table.add_row("1. Start/continue tournament", "", "", "", "", "", "")
-        table.add_row("2. Return to Main Menu", "", "", "", "", "", "", "")
-        return self.printToUser(table)
+            table.add_row(
+                "",
+                player["first_name"],
+                player["last_name"],
+                player["gender"],
+                player["birthday"],
+                str(player["rating"]),
+                "",
+            )
+        self.printToUser(table, justify="center")
+        self.printToUser("1. Start/continue tournament")
+        self.printToUser("2. Return to Main Menu")
+        self.printToUser("\n")
+
+    def displayFirstRound(self, players):
+        players = players
+        self.printToUser("\n")
+        table = Table(show_header=True, header_style="bold", title="Round 1", box=box.SIMPLE)
+        table.add_column("Game 1", justify="center")
+        table.add_column("Game 2", justify="center")
+        table.add_column("Game 3", justify="center")
+        table.add_column("Game 4", justify="center")
+        table.add_row(
+            f"{players[0][0]['first_name']} {players[0][0]['last_name']} ({players[0][0]['rating']})\nvs\n{players[0][1]['first_name']} {players[0][1]['last_name']} ({players[0][1]['rating']})",
+            f"{players[1][0]['first_name']} {players[1][0]['last_name']} ({players[1][0]['rating']})\nvs\n{players[1][1]['first_name']} {players[1][1]['last_name']} ({players[1][1]['rating']})",
+            f"{players[2][0]['first_name']} {players[2][0]['last_name']} ({players[2][0]['rating']})\nvs\n{players[2][1]['first_name']} {players[2][1]['last_name']} ({players[2][1]['rating']})",
+            f"{players[3][0]['first_name']} {players[3][0]['last_name']} ({players[3][0]['rating']})\nvs\n{players[3][1]['first_name']} {players[3][1]['last_name']} ({players[3][1]['rating']})",
+        )
+        self.printToUser(table, justify="center")
+        self.printToUser("1. Enter results")
+        self.printToUser("2. Return to Main Menu")
+        self.printToUser("\n")

@@ -10,9 +10,10 @@ class BaseView:
     def __init__(self) -> None:
         self.console = Console()
 
-    def printToUser(self, value):
+    def printToUser(self, value, justify: str = "default"):
         print_value = value
-        console_print = self.console.print(print_value)  # type: ignore
+        justify = justify
+        console_print = self.console.print(print_value, justify=justify)  # type: ignore
         return console_print
 
     def askUser(self, value: str):
@@ -45,7 +46,7 @@ class BaseView:
         table.add_row("-- DEBUG --")
         table.add_row("8. Generate dummy players for testing")
         table.add_row("9. Delete ALL tournaments data")
-        self.console.print(table)
+        self.printToUser(table, justify="center")
         logging.info("Request user choice")
         user_choice = self.askUser("Type a number from menu: ")
         logging.info(f"User choice: {user_choice}")

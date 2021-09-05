@@ -1,5 +1,4 @@
 class Round:
-
     def __init__(self) -> None:
         pass
 
@@ -7,7 +6,8 @@ class Round:
         first = first
         players = players
         if first:
-            player_up, player_down = self.splitPlayers(players)
+            players_sorted = sorted(players, key=lambda player: player["rating"], reverse=True)
+            player_up, player_down = self.splitPlayers(players_sorted)
             paired_players = tuple(zip(player_up, player_down))
             return paired_players
 

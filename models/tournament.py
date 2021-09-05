@@ -13,7 +13,18 @@ class Tournament:
     rounds = IntPositive("Rounds")
     date = Date("Date", "%d/%m/%Y")
 
-    def __init__(self, name: str, location: str, time_type: str, description: str, date: str, rounds: int = 4, players: list[str] = [], games: list[str] = [], end_date: str = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        location: str,
+        time_type: str,
+        description: str,
+        date: str,
+        rounds: int = 4,
+        players: list[str] = [],
+        games: list[str] = [],
+        end_date: str = None,
+    ) -> None:
         self.name = name
         self.location = location
         self.rounds = rounds

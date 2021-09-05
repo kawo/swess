@@ -125,7 +125,7 @@ class Database:
             "date": self.tournament.date,
             "games": self.tournament.games,
             "end_date": self.tournament.end_date,
-            "players": self.tournament.players
+            "players": self.tournament.players,
         }
         return serialized_tournament
 
@@ -151,7 +151,7 @@ class Database:
         players_exists = self.checkPlayerID(players)
         if players_exists:
             last_tournament = self.tournament_table.get(doc_id=len(self.db))
-            self.tournament_table.update({'players': players}, doc_ids=last_tournament)
+            self.tournament_table.update({"players": players}, doc_ids=last_tournament)
             return players_exists
         else:
             return players_exists
