@@ -32,6 +32,9 @@ class TournamentView(BaseView):
                 tournament["time_type"],
                 tournament["description"],
             )
+        table.add_row("", "", "", "", "", "", "", "")
+        table.add_row("1. Choose a Tournament", "", "", "", "", "", "", "")
+        table.add_row("2. Return to Main Menu", "", "", "", "", "" , "", "", "")
         return self.printToUser(table)
 
     def displayNewTournament(self):
@@ -111,3 +114,37 @@ class TournamentView(BaseView):
             self.printToUser(f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: {rounds!r}\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]")
         else:
             self.printToUser(f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: '4'\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]")
+
+    def displayTournament(self, tournament, players) -> None:
+        """display choosed tournament"""
+        self.console.clear()
+        tournament = tournament
+        players = players
+        table = Table(
+            show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nTournament details", box=box.SIMPLE
+        )
+        table.add_column("Name")
+        table.add_column("Location")
+        table.add_column("Date")
+        table.add_column("End Date")
+        table.add_column("Rounds")
+        table.add_column("Time Type")
+        table.add_column("Description")
+        table.add_row(
+            tournament["name"],
+            tournament["location"],
+            tournament["date"],
+            tournament["end_date"],
+            str(tournament["rounds"]),
+            tournament["time_type"],
+            tournament["description"],
+        )
+        table.add_row("", "", "", "", "", "", "")
+        table.add_row("", "", "", "Players list", "", "", "")
+        table.add_row("", "", "", "", "", "", "")
+        for player in players:
+            table.add_row("", player["first_name"], player["last_name"], player["gender"], player["birthday"], str(player["rating"]), "")
+        table.add_row("", "", "", "", "", "", "")
+        table.add_row("1. Start/continue tournament", "", "", "", "", "", "")
+        table.add_row("2. Return to Main Menu", "", "", "", "", "", "", "")
+        return self.printToUser(table)

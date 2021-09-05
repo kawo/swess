@@ -20,6 +20,10 @@ class BaseView:
         question = self.console.input(question_value)
         return question
 
+    def askUserChoice(self):
+        choice = self.askUser("What do you want to do? ")
+        return choice
+
     def displayMainMenu(self):
         """Display the Main Menu"""
         logging.info("View.displayMainMenu")
@@ -64,3 +68,17 @@ class BaseView:
             return self.askReturnToMainMenu()
         else:
             return self.askReturnToMainMenu()
+
+    def askPlayerId(self):
+        ask = self.askUser("Enter Player ID: ")
+        if ask:
+            return ask
+        else:
+            return self.askPlayerId()
+
+    def askTournamentId(self):
+        ask = self.askUser("Enter Tournament ID: ")
+        if ask:
+            return ask
+        else:
+            return self.askTournamentId()

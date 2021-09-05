@@ -54,6 +54,12 @@ class Player:
         all_players = self.db.getAll("players")
         return all_players
 
+    def getPlayerById(self, value):
+        id = value
+        self.db = Database()
+        player = self.db.getPlayerById(id)
+        return player
+
     def modifyFirstName(self, value: str):
         pass
 
@@ -66,8 +72,11 @@ class Player:
     def modifyGender(self, value: str):
         pass
 
-    def modifyRating(self, value: int):
-        pass
+    def modifyRanking(self, id: int, ranking: int):
+        id = id
+        ranking = ranking
+        self.db = Database()
+        self.db.modifyRanking(id, ranking)
 
     def delete(self, value: int):
         pass

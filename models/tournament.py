@@ -58,6 +58,12 @@ class Tournament:
         else:
             logging.error("Players not added to tournaments!")
 
+    def getTournamentById(self, value):
+        id = value
+        self.db = Database()
+        tournament = self.db.getTournamentById(id)
+        return tournament
+
     def delTournaments(self):
         self.db = Database()
         self.db.tournament_table.truncate()

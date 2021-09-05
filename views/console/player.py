@@ -28,13 +28,45 @@ class PlayerView(BaseView):
                 player["birthday"],
                 str(player["rating"]),
             )
+        table.add_row("", "", "", "", "", "")
+        table.add_row("1. View/modify player", "", "", "", "", "")
+        table.add_row("2. Return to Main Menu", "", "", "", "", "")
         return self.printToUser(table)
+
+    def displayPlayer(self, player) -> None:
+        """display all recorded players"""
+        self.console.clear()
+        player = player
+        table = Table(
+            show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nPlayer details", box=box.SIMPLE
+        )
+        table.add_column("Last Name")
+        table.add_column("First Name")
+        table.add_column("Gender")
+        table.add_column("Birthday")
+        table.add_column("Ranking")
+        table.add_row(
+            player["last_name"],
+            player["first_name"],
+            player["gender"],
+            player["birthday"],
+            str(player["rating"]),
+        )
+        table.add_row("", "", "", "", "")
+        table.add_row("1. Modify ranking", "", "", "", "")
+        table.add_row("2. Return to Main Menu", "", "", "", "")
+        return self.printToUser(table)
+
+    def askNewRanking(self):
+        ranking = self.askUser("New ranking: ")
+        return ranking
 
     def displaySortedByRating(self, value) -> None:
         """display all recorded players sorted by rating"""
         self.console.clear()
         self.sorted_players = value
         table = Table(show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nPlayers Ranking", box=box.SIMPLE)
+        table.add_column("Id")
         table.add_column("Last Name")
         table.add_column("First Name")
         table.add_column("Gender")
@@ -42,12 +74,16 @@ class PlayerView(BaseView):
         table.add_column("Ranking")
         for player in self.sorted_players:
             table.add_row(
+                str(player.doc_id),
                 player["last_name"],
                 player["first_name"],
                 player["gender"],
                 player["birthday"],
                 str(player["rating"]),
             )
+        table.add_row("", "", "", "", "", "")
+        table.add_row("1. View/modify player", "", "", "", "", "")
+        table.add_row("2. Return to Main Menu", "", "", "", "", "")
         return self.printToUser(table)
 
     def displayAddPlayer(self) -> dict:

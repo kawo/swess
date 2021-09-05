@@ -169,3 +169,19 @@ class Database:
                 player_exists = False
                 logging.error(f"Player ID {player} does not exists!")
         return player_exists
+
+    def getPlayerById(self, value):
+        id = int(value)
+        player = self.players_table.get(doc_id=id)
+        player["id"] = id
+        return player
+
+    def getTournamentById(self, value):
+        id = int(value)
+        tournament = self.tournament_table.get(doc_id=id)
+        return tournament
+
+    def modifyRanking(self, id, ranking):
+        id = int(id)
+        ranking = int(ranking)
+        return self.players_table.update({"rating": ranking}, doc_ids=[id])

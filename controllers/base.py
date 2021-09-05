@@ -3,6 +3,7 @@ import logging
 import sys
 
 from models.player import Player
+from models.round import Round
 from models.tournament import Tournament
 from views.console.base import BaseView
 from views.console.player import PlayerView
@@ -74,6 +75,13 @@ class Controller:
         if choice:
             return self.startApp()
 
+    def choosePlayer(self):
+        choice = self.base_view.askPlayerId()
+        if choice:
+            player = Player.getPlayerById(self, choice)
+            self.player_view.displayPlayer(player)
+            return self.playerMenuChoice(choice)
+
     def showTournamentLogs(self):
         """Ask model for all registered tournaments"""
         tournament = Tournament.getAllTournaments(self)
@@ -118,7 +126,7 @@ class Controller:
         self.player_view.displayAllPlayers(players_list)
         players = self.tournament_view.addPlayers()
         Tournament.addPlayers(self, players)
-        return self.showTournamentLogs()
+        return self.showCurrentTournaments()
 
     def addPlayer(self):
         player = self.player_view.displayAddPlayer()
@@ -156,19 +164,118 @@ class Controller:
         """ask model for all the players"""
         players = Player.getAllPlayers(self)
         self.player_view.displayAllPlayers(players)
-        return self.returnToMainMenu()
+        return self.playersMenuChoice()
+
+    def playersMenuChoice(self):
+        choice = self.base_view.askUserChoice()
+        if choice:
+            if choice == "1":
+                return self.choosePlayer()
+            if choice == "2":
+                return self.startApp()
+            else:
+                return self.playersMenuChoice()
+        else:
+            return self.playersMenuChoice()
+
+    def playerMenuChoice(self, id):
+        player_id = id
+        choice = self.base_view.askUserChoice()
+        if choice:
+            if choice == "1":
+                return self.modifyPlayerRanking(player_id)
+            if choice == "2":
+                return self.startApp()
+            else:
+                return self.playerMenuChoice()
+        else:
+            return self.playerMenuChoice()
+
+    def modifyPlayerRanking(self, id):
+        id = id
+        ranking = self.player_view.askNewRanking()
+        Player.modifyRanking(self, id, ranking)
+        player = Player.getPlayerById(self, id)
+        self.player_view.displayPlayer(player)
+        return self.playerMenuChoice(id)
 
     def sortPlayersByRating(self):
         """sort players by rating"""
         players = Player.getAllPlayers(self)
         players_sorted = sorted(players, key=lambda player: player["rating"], reverse=True)
         self.player_view.displaySortedByRating(players_sorted)
-        return self.returnToMainMenu()
+        return self.playersMenuChoice()
 
     def showCurrentTournaments(self):
         opened_tournament = Tournament.getAllOpenedTournaments(self)
         self.tournament_view.displayTournamentLogs(opened_tournament)
-        return self.returnToMainMenu()
+        return self.tournamentsMenuChoice()
+
+    def tournamentsMenuChoice(self):
+        choice = self.base_view.askUserChoice()
+        if choice:
+            if choice == "1":
+                return self.chooseTournament()
+            if choice == "2":
+                return self.startApp()
+            else:
+                return self.tournamentsMenuChoice()
+        else:
+            return self.tournamentsMenuChoice()
+
+    def chooseTournament(self):
+        choice = self.base_view.askTournamentId()
+        if choice:
+            tournament = Tournament.getTournamentById(self, choice)
+            players = []
+            for player in tournament["players"]:
+                players.append(Player.getPlayerById(self, player))
+            players_sorted = sorted(players, key=lambda player: player["first_name"])
+            self.tournament_view.displayTournament(tournament, players_sorted)
+            return self.tournamentMenuChoice(choice)
+
+    def tournamentMenuChoice(self, id):
+        tournament_id = id
+        logging.info(f"Tournament ID: {tournament_id}")
+        choice = self.base_view.askUserChoice()
+        if choice:
+            if choice == "1":
+                logging.info(f"User choice: {choice}")
+                return self.startTournament(tournament_id)
+            if choice == "2":
+                logging.info(f"User choice: {choice}")
+                return self.startApp()
+            else:
+                return self.tournamentMenuChoice()
+        else:
+            return self.tournamentMenuChoice()
+
+    def startTournament(self, id):
+        tournament_id = id
+        logging.info(f"Tournament ID: {tournament_id}")
+        tournament = Tournament.getTournamentById(self, tournament_id)
+        games = tournament["games"]
+        if games:
+            logging.info(f"Tournament games: {games}")
+            return self.computeNextRound(tournament_id)
+        else:
+            logging.info(f"Tournament games: {games}")
+            return self.computeFirstRound(tournament_id)
+
+    def computeFirstRound(self, id):
+        tournament_id = id
+        logging.info(f"Tournament ID: {tournament_id}")
+        tournament = Tournament.getTournamentById(self, tournament_id)
+        players = []
+        for player in tournament["players"]:
+            logging.info(f"Player: {player}")
+            players.append(Player.getPlayerById(self, player))
+        players_sorted = sorted(players, key=lambda player: player["rating"], reverse=True)
+        first_round = Round()
+        return first_round.pairPlayers(players_sorted, True)
+
+    def computeNextRound(self, id):
+        pass
 
     def generateDummyData(self):
         Player.dummyData(self)
