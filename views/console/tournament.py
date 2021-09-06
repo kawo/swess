@@ -28,7 +28,7 @@ class TournamentView(BaseView):
                 tournament["location"],
                 tournament["date"],
                 tournament["end_date"],
-                str(tournament["rounds"]),
+                str(tournament["rounds_number"]),
                 tournament["time_type"],
                 tournament["description"],
             )
@@ -103,22 +103,6 @@ class TournamentView(BaseView):
         else:
             self.askRetryNewTournament()
 
-    def tournamentAdded(self, value):
-        name = value["name"]
-        location = value["location"]
-        date = value["date"]
-        rounds = value["rounds"]
-        time_type = value["time_type"]
-        description = value["description"]
-        if rounds:
-            self.printToUser(
-                f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: {rounds!r}\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]"
-            )
-        else:
-            self.printToUser(
-                f"[green]Tournament Name: {name!r}\nLocation: {location!r}\nDate: {date!r}\nRounds: '4'\nTime Type: {time_type!r}\nDescription: {description!r}[/green]\n[bold green]Registered in database![/bold green]"
-            )
-
     def displayTournament(self, tournament, players) -> None:
         """display choosed tournament"""
         self.console.clear()
@@ -139,7 +123,7 @@ class TournamentView(BaseView):
             tournament["location"],
             tournament["date"],
             tournament["end_date"],
-            str(tournament["rounds"]),
+            str(tournament["rounds_number"]),
             tournament["time_type"],
             tournament["description"],
         )

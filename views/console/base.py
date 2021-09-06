@@ -25,6 +25,10 @@ class BaseView:
         choice = self.askUser("What do you want to do? ")
         return choice
 
+    def askUserGame(self):
+        choice = self.askUser("Enter results for which game? ")
+        return choice
+
     def displayMainMenu(self):
         """Display the Main Menu"""
         logging.info("View.displayMainMenu")

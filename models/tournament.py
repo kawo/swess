@@ -10,7 +10,7 @@ class Tournament:
     location = String(minsize=3, maxsize=30, name="Location")
     description = String(minsize=10, maxsize=500, name="Description")
     time_type = OneOf("Time Type", "bullet", "blitz", "rapid")
-    rounds = IntPositive("Rounds")
+    rounds_number = IntPositive("Rounds")
     date = Date("Date", "%d/%m/%Y")
 
     def __init__(
@@ -20,19 +20,19 @@ class Tournament:
         time_type: str,
         description: str,
         date: str,
-        rounds: int = 4,
+        rounds_number: int = 4,
         players: list[str] = [],
-        games: list[str] = [],
+        rounds: list[int] = [],
         end_date: str = None,
     ) -> None:
         self.name = name
         self.location = location
-        self.rounds = rounds
+        self.rounds_number = rounds_number
         self.time_type = time_type
         self.description = description
         self.date = date
         self.players = players
-        self.games = games
+        self.rounds = rounds
         self.end_date = end_date
 
     def addToDb(self, value) -> bool:
@@ -48,6 +48,12 @@ class Tournament:
         self.db = Database()
         self.register_tournament = self.db.registerTournament(self.tournament)
         return self.register_tournament
+
+    def registerRoundToTournament(self, round, id):
+        round = round
+        tournament_id = id
+        self.db = Database()
+        self.db.registerRound(round, tournament_id)
 
     def getAllTournaments(self):
         """Get all registered tournaments from database"""

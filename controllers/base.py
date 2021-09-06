@@ -254,12 +254,12 @@ class Controller:
         tournament_id = id
         logging.info(f"Tournament ID: {tournament_id}")
         tournament = Tournament.getTournamentById(self, tournament_id)
-        games = tournament["games"]
-        if games:
-            logging.info(f"Tournament games: {games}")
+        rounds = tournament["rounds"]
+        if rounds:
+            logging.info(f"Tournament games: {rounds}")
             return self.computeNextRound(tournament_id)
         else:
-            logging.info(f"Tournament games: {games}")
+            logging.info(f"Tournament games: {rounds}")
             return self.computeFirstRound(tournament_id)
 
     def computeFirstRound(self, id):
@@ -271,8 +271,36 @@ class Controller:
             logging.info(f"Player: {player}")
             players.append(Player.getPlayerById(self, player))
         first_round = Round()
-        paired_players = first_round.pairPlayers(players, True)
-        return self.tournament_view.displayFirstRound(paired_players)
+        paired_players, round = first_round.pairPlayers(players, True)
+        logging.info(f"computeFirstRound: {paired_players}")
+        logging.info(f"computeFirstRound ID: {round}")
+        Tournament.registerRoundToTournament(self, round, tournament_id)
+        self.tournament_view.displayFirstRound(paired_players)
+        return self.roundMenuChoice(round)
+
+    def roundMenuChoice(self, id):
+        round_id = id
+        logging.info(f"Round ID: {round_id}")
+        choice = self.base_view.askUserChoice()
+        if choice:
+            if choice == "1":
+                logging.info(f"User choice: {choice}")
+                return self.enterResults(round_id)
+            if choice == "2":
+                logging.info(f"User choice: {choice}")
+                return self.startApp()
+            else:
+                return self.roundMenuChoice()
+        else:
+            return self.roundMenuChoice()
+
+    def enterResults(self, id):
+        round_id = id
+        choice = self.base_view.askUserGame()
+        if choice:
+            return self.base_view.printToUser(f"Game {choice}")
+        else:
+            return self.enterResults(round_id)
 
     def computeNextRound(self, id):
         pass

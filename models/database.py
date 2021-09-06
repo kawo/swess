@@ -10,6 +10,8 @@ class Database:
         self.db = tinydb.TinyDB("db.json", ensure_ascii=False)
         self.players_table = self.db.table("players")
         self.tournament_table = self.db.table("tournaments")
+        self.rounds_table = self.db.table("rounds")
+        self.games_table = self.db.table("games")
         self.console = Console()
 
     def serializePlayer(self, value) -> dict:
@@ -119,11 +121,11 @@ class Database:
         serialized_tournament = {
             "name": self.tournament.name,
             "location": self.tournament.location,
-            "rounds": self.tournament.rounds,
+            "rounds_number": self.tournament.rounds_number,
             "time_type": self.tournament.time_type,
             "description": self.tournament.description,
             "date": self.tournament.date,
-            "games": self.tournament.games,
+            "rounds": self.tournament.rounds,
             "end_date": self.tournament.end_date,
             "players": self.tournament.players,
         }
@@ -145,6 +147,17 @@ class Database:
             insert = False
         logging.info(f"Insert: {insert}")
         return insert
+
+    def insertRound(self, games, name):
+        games_list = games
+        round_name = name
+        round = {"name": round_name, "games": games_list}
+        return self.rounds_table.insert(round)
+
+    def insertPairedPlayer(self, players):
+        paired_players = players
+        game_id = self.games_table.insert(paired_players)
+        return game_id
 
     def addPlayers(self, value) -> bool:
         players = value
@@ -180,6 +193,13 @@ class Database:
         id = int(value)
         tournament = self.tournament_table.get(doc_id=id)
         return tournament
+
+    def registerRound(self, round, id):
+        round = [round]
+        tournament_id = int(id)
+        logging.info(f"{round} {tournament_id}")
+        result = self.tournament_table.update({"rounds": round}, doc_ids=[tournament_id])
+        return result
 
     def modifyRanking(self, id, ranking):
         id = int(id)
