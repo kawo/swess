@@ -182,5 +182,28 @@ class TournamentView(BaseView):
         )
         self.printToUser(table, justify="center")
         self.printToUser("1. Enter results")
-        self.printToUser("2. Return to Main Menu")
+        self.printToUser("2. End round")
+        self.printToUser("3. Return to Main Menu")
         self.printToUser("\n")
+
+    def chooseGame(self):
+        game_id = self.askUser("Enter results for which game? ")
+        return game_id
+
+    def showGame(self, players, game_id):
+        game_id = game_id
+        players = players
+        self.printToUser("\n")
+        table = Table(show_header=True, header_style="bold", title=f"Game {game_id}", box=box.SIMPLE)
+        table.add_column("Id", justify="center")
+        table.add_column("Player", justify="center")
+        table.add_column("Score", justify="center")
+        table.add_column("Ranking", justify="center")
+        for player in players:
+            table.add_row(
+                str(player["id"]),
+                f"{player['first_name']} {player['last_name']}",
+                str(player["score"]),
+                str(player["rating"]),
+            )
+        self.printToUser(table, justify="center")

@@ -2,6 +2,7 @@
 import logging
 import sys
 
+from models.game import Game
 from models.player import Player
 from models.round import Round
 from models.tournament import Tournament
@@ -275,7 +276,7 @@ class Controller:
                 players_id.append(player["id"])
             scores = Round.getScoreFromGames(self, round)
             self.tournament_view.displayRound(f"Round {round}", players_list, scores)
-            return self.roundMenuChoice(round)
+            return self.roundMenuChoice(round, tournament)
 
     def computeFirstRound(self, id):
         tournament_id = id
@@ -293,15 +294,19 @@ class Controller:
         self.tournament_view.displayFirstRound(paired_players)
         return self.roundMenuChoice(round)
 
-    def roundMenuChoice(self, id):
+    def roundMenuChoice(self, id, tournament):
         round_id = id
+        tournament = tournament
         logging.info(f"Round ID: {round_id}")
         choice = self.base_view.askUserChoice()
         if choice:
             if choice == "1":
                 logging.info(f"User choice: {choice}")
-                return self.enterResults(round_id)
+                return self.enterResults(round_id, tournament)
             if choice == "2":
+                logging.info("Ending round...")
+                return print("Ending round")
+            if choice == "3":
                 logging.info(f"User choice: {choice}")
                 return self.startApp()
             else:
@@ -309,13 +314,24 @@ class Controller:
         else:
             return self.roundMenuChoice()
 
-    def enterResults(self, id):
+    def enterResults(self, id, tournament):
         round_id = id
-        choice = self.base_view.askUserGame()
-        if choice:
-            return self.base_view.printToUser(f"Game {choice}")
+        tournament = tournament
+        game_id = self.tournament_view.askUserGame()
+        if game_id:
+            players = Game.getPlayersFromGame(self, game_id)
+            self.tournament_view.showGame(players, game_id)
+            player_id = self.base_view.askUser("Enter Player ID: ")
+            score = self.base_view.askUser("Enter score (1, 0.5, 0): ")
+            Game.addScore(self, game_id, player_id, score)
+            return self.continueTournament(tournament)
         else:
             return self.enterResults(round_id)
+
+    def showGame(self, game):
+        game_id = game
+        result = Game.getGame(self, game_id)
+        return result
 
     def computeNextRound(self, id):
         pass

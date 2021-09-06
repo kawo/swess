@@ -161,7 +161,7 @@ class Database:
     def insertPairedPlayer(self, players):
         paired_players = players
         game_id = self.games_table.insert(
-            {"player1": paired_players[0], "score1": 0, "player2": paired_players[1], "score2": 0}
+            {"player1": paired_players[0], "score1": 0.0, "player2": paired_players[1], "score2": 0.0}
         )
         return game_id
 
@@ -221,12 +221,18 @@ class Database:
     def getScores(self, game):
         game = game
         result = self.games_table.get(doc_id=game)
+        logging.info(f"Scores: {result}")
         return result
 
     def getTournamentById(self, value):
         id = int(value)
         tournament = self.tournament_table.get(doc_id=id)
         return tournament
+
+    def getGame(self, game):
+        game_id = int(game)
+        game = self.games_table.get(doc_id=game_id)
+        return game
 
     def registerRound(self, round, id):
         round = [round]
@@ -239,3 +245,14 @@ class Database:
         id = int(id)
         ranking = int(ranking)
         return self.players_table.update({"rating": ranking}, doc_ids=[id])
+
+    def modifyScore(self, game, player, score):
+        game_id = int(game)
+        player_id = int(player)
+        score = float(score)
+        logging.info(f"{game_id}, {player_id}, {score}")
+        result = self.games_table.get(doc_id=game_id)
+        if result["player1"] == player_id:
+            return self.games_table.update({"score1": score}, doc_ids=[game_id])
+        if result["player2"] == player_id:
+            return self.games_table.update({"score2": score}, doc_ids=[game_id])
