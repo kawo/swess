@@ -35,6 +35,10 @@ class Round:
         players_down = players[middle:]
         return players_up, players_down
 
+    def endRound(self, round):
+        round_id = round
+        return self.db.endRound(round_id)
+
     def getPlayersFromGames(self, id):
         round_id = id
         round = self.db.getRoundById(round_id)

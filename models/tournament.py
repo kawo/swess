@@ -81,6 +81,12 @@ class Tournament:
         tournament = self.db.getTournamentById(id)
         return tournament
 
+    def getNextRound(self, tournament):
+        tournament_id = tournament
+        tournament = Tournament.getTournamentById(self, tournament_id)
+        next_round = len(tournament["rounds"]) + 1
+        return next_round
+
     def checkRoundEndTime(self, tournament) -> bool:
         tournament = tournament
         result = self.db.checkRoundEndTime(tournament)

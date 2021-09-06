@@ -235,8 +235,8 @@ class Controller:
             self.tournament_view.displayTournament(tournament, players_sorted)
             return self.tournamentMenuChoice(choice)
 
-    def tournamentMenuChoice(self, id):
-        tournament_id = id
+    def tournamentMenuChoice(self, tournament):
+        tournament_id = tournament
         logging.info(f"Tournament ID: {tournament_id}")
         choice = self.base_view.askUserChoice()
         if choice:
@@ -247,9 +247,9 @@ class Controller:
                 logging.info(f"User choice: {choice}")
                 return self.startApp()
             else:
-                return self.tournamentMenuChoice()
+                return self.tournamentMenuChoice(tournament_id)
         else:
-            return self.tournamentMenuChoice()
+            return self.tournamentMenuChoice(tournament_id)
 
     def startTournament(self, id):
         tournament_id = id
@@ -258,17 +258,18 @@ class Controller:
         rounds = tournament["rounds"]
         if rounds:
             logging.info(f"Tournament games: {rounds}")
-            return self.continueTournament(tournament)
+            return self.continueTournament(tournament, tournament_id)
         else:
             logging.info(f"Tournament games: {rounds}")
             return self.computeFirstRound(tournament_id)
 
-    def continueTournament(self, tournament):
+    def continueTournament(self, tournament, tournament_id):
+        tournament_id = tournament_id
         tournament = tournament
         round = len(tournament["rounds"])
         check = Tournament.checkRoundEndTime(self, tournament)
         if check:
-            return self.base_view.printToUser("Ok nouveau round")
+            return self.computeNextRound(tournament_id)
         else:
             players_list = Round.getPlayersFromGames(self, round)
             players_id = []
@@ -276,7 +277,7 @@ class Controller:
                 players_id.append(player["id"])
             scores = Round.getScoreFromGames(self, round)
             self.tournament_view.displayRound(f"Round {round}", players_list, scores)
-            return self.roundMenuChoice(round, tournament)
+            return self.roundMenuChoice(round, tournament, tournament_id)
 
     def computeFirstRound(self, id):
         tournament_id = id
@@ -294,18 +295,20 @@ class Controller:
         self.tournament_view.displayFirstRound(paired_players)
         return self.roundMenuChoice(round)
 
-    def roundMenuChoice(self, id, tournament):
-        round_id = id
+    def roundMenuChoice(self, round, tournament, tournament_id):
+        round_id = round
         tournament = tournament
+        tournament_id = tournament_id
         logging.info(f"Round ID: {round_id}")
         choice = self.base_view.askUserChoice()
         if choice:
             if choice == "1":
                 logging.info(f"User choice: {choice}")
-                return self.enterResults(round_id, tournament)
+                return self.enterResults(round_id, tournament, tournament_id)
             if choice == "2":
                 logging.info("Ending round...")
-                return print("Ending round")
+                Round.endRound(self, round_id)
+                return self.computeNextRound(tournament_id)
             if choice == "3":
                 logging.info(f"User choice: {choice}")
                 return self.startApp()
@@ -314,9 +317,10 @@ class Controller:
         else:
             return self.roundMenuChoice()
 
-    def enterResults(self, id, tournament):
-        round_id = id
+    def enterResults(self, round, tournament, tournament_id):
+        round_id = round
         tournament = tournament
+        tournament_id = tournament_id
         game_id = self.tournament_view.askUserGame()
         if game_id:
             players = Game.getPlayersFromGame(self, game_id)
@@ -324,7 +328,7 @@ class Controller:
             player_id = self.base_view.askUser("Enter Player ID: ")
             score = self.base_view.askUser("Enter score (1, 0.5, 0): ")
             Game.addScore(self, game_id, player_id, score)
-            return self.continueTournament(tournament)
+            return self.continueTournament(tournament, tournament_id)
         else:
             return self.enterResults(round_id)
 
@@ -333,8 +337,21 @@ class Controller:
         result = Game.getGame(self, game_id)
         return result
 
-    def computeNextRound(self, id):
-        pass
+    def computeNextRound(self, tournament):
+        tournament_id = tournament
+        next_round = Tournament.getNextRound(self, tournament_id)
+        tournament = Tournament.getTournamentById(self, tournament_id)
+        players = []
+        for player in tournament["players"]:
+            logging.info(f"Player: {player}")
+            players.append(Player.getPlayerById(self, player))
+        first_round = Round()
+        paired_players, round = first_round.pairPlayers(players, True)
+        logging.info(f"computeFirstRound: {paired_players}")
+        logging.info(f"computeFirstRound ID: {round}")
+        Tournament.registerRoundToTournament(self, round, tournament_id)
+        self.tournament_view.displayFirstRound(paired_players)
+        return self.roundMenuChoice(round)
 
     def generateDummyData(self):
         Player.dummyData(self)

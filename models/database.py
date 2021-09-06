@@ -158,6 +158,12 @@ class Database:
         round = {"name": round_name, "games": games_list, "date_started": date_now, "date_ended": date_ended}
         return self.rounds_table.insert(round)
 
+    def endRound(self, round):
+        round_id = round
+        now = datetime.now()
+        date_now = now.strftime("%d/%m/%Y - %H:%M:%S")
+        return self.rounds_table.update({"date_ended": date_now}, doc_ids=[round_id])
+
     def insertPairedPlayer(self, players):
         paired_players = players
         game_id = self.games_table.insert(
