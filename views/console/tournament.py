@@ -164,9 +164,10 @@ class TournamentView(BaseView):
         self.printToUser("2. Return to Main Menu")
         self.printToUser("\n")
 
-    def displayRound(self, name, players):
+    def displayRound(self, name, players, scores):
         round_name = name
         players = players
+        scores = scores
         self.printToUser("\n")
         table = Table(show_header=True, header_style="bold", title=round_name, box=box.SIMPLE)
         table.add_column("Game 1", justify="center")
@@ -174,10 +175,10 @@ class TournamentView(BaseView):
         table.add_column("Game 3", justify="center")
         table.add_column("Game 4", justify="center")
         table.add_row(
-            f"{players[0]['first_name']} {players[0]['last_name']} ({players[0]['rating']})\nvs\n{players[1]['first_name']} {players[1]['last_name']} ({players[1]['rating']})",
-            f"{players[2]['first_name']} {players[2]['last_name']} ({players[2]['rating']})\nvs\n{players[3]['first_name']} {players[3]['last_name']} ({players[3]['rating']})",
-            f"{players[4]['first_name']} {players[4]['last_name']} ({players[4]['rating']})\nvs\n{players[5]['first_name']} {players[5]['last_name']} ({players[5]['rating']})",
-            f"{players[6]['first_name']} {players[6]['last_name']} ({players[6]['rating']})\nvs\n{players[7]['first_name']} {players[7]['last_name']} ({players[7]['rating']})",
+            f"{players[0]['first_name']} {players[0]['last_name']}\n(Ranking: {players[0]['rating']}, Score: {scores[0][1]})\nvs\n{players[1]['first_name']} {players[1]['last_name']}\n(Ranking: {players[1]['rating']}, Score: {scores[1][1]})",
+            f"{players[2]['first_name']} {players[2]['last_name']}\n(Ranking: {players[2]['rating']}, Score: {scores[2][1]})\nvs\n{players[3]['first_name']} {players[3]['last_name']}\n(Ranking: {players[3]['rating']}, Score: {scores[3][1]})",
+            f"{players[4]['first_name']} {players[4]['last_name']}\n(Ranking: {players[4]['rating']}, Score: {scores[4][1]})\nvs\n{players[5]['first_name']} {players[5]['last_name']}\n(Ranking: {players[5]['rating']}, Score: {scores[5][1]})",
+            f"{players[6]['first_name']} {players[6]['last_name']}\n(Ranking: {players[6]['rating']}, Score: {scores[6][1]})\nvs\n{players[7]['first_name']} {players[7]['last_name']}\n(Ranking: {players[7]['rating']}, Score: {scores[7][1]})",
         )
         self.printToUser(table, justify="center")
         self.printToUser("1. Enter results")

@@ -160,7 +160,9 @@ class Database:
 
     def insertPairedPlayer(self, players):
         paired_players = players
-        game_id = self.games_table.insert(paired_players)
+        game_id = self.games_table.insert(
+            {"player1": paired_players[0], "score1": 0, "player2": paired_players[1], "score2": 0}
+        )
         return game_id
 
     def addPlayers(self, value) -> bool:
@@ -194,7 +196,7 @@ class Database:
         logging.info(f"last_round_id = {last_round_id}")
         round = self.rounds_table.get(doc_id=last_round_id)
         logging.info(round)
-        date_ended = round["date_ended"]
+        date_ended = round["date_ended"]  # type: ignore
         logging.info(date_ended)
         if date_ended:
             check = True
@@ -203,6 +205,7 @@ class Database:
     def getPlayerById(self, value):
         id = int(value)
         player = self.players_table.get(doc_id=id)
+        player.update({"id": id})
         return player
 
     def getRoundById(self, id):
@@ -213,10 +216,12 @@ class Database:
     def getPlayersIdFromGame(self, id):
         game_id = int(id)
         players = self.games_table.get(doc_id=game_id)
-        players_list = []
-        for player in players:
-            players_list.append(player)
-        return players_list
+        return players
+
+    def getScores(self, game):
+        game = game
+        result = self.games_table.get(doc_id=game)
+        return result
 
     def getTournamentById(self, value):
         id = int(value)

@@ -270,7 +270,11 @@ class Controller:
             return self.base_view.printToUser("Ok nouveau round")
         else:
             players_list = Round.getPlayersFromGames(self, round)
-            self.tournament_view.displayRound(f"Round {round}", players_list)
+            players_id = []
+            for player in players_list:
+                players_id.append(player["id"])
+            scores = Round.getScoreFromGames(self, round)
+            self.tournament_view.displayRound(f"Round {round}", players_list, scores)
             return self.roundMenuChoice(round)
 
     def computeFirstRound(self, id):

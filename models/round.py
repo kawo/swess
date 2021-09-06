@@ -40,10 +40,23 @@ class Round:
         round = self.db.getRoundById(round_id)
         games = round["games"]
         players = []
-        for player in games:
-            players.append(Game.getPlayers(self, player))
+        for game in games:
+            players.append(Game.getPlayers(self, game))
         players_list = []
         for player in players:
-            players_list.append(self.db.getPlayerById(player[0]))
-            players_list.append(self.db.getPlayerById(player[1]))
+            players_list.append(self.db.getPlayerById(player["player1"]))
+            players_list.append(self.db.getPlayerById(player["player2"]))
         return players_list
+
+    def getScoreFromGames(self, round):
+        round_id = round
+        round = self.db.getRoundById(round_id)
+        games = round["games"]
+        scores1 = []
+        scores2 = []
+        for game in games:
+            score = self.db.getScores(game)
+            scores1.extend((score["player1"], score["player2"]))
+            scores2.extend((score["score1"], score["score2"]))
+        scores = tuple(zip(scores1, scores2))
+        return scores

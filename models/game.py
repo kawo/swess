@@ -9,7 +9,7 @@ class Game:
         players = players
         games_id = []
         for player in players:
-            games_id.append(self.db.insertPairedPlayer({player[0]: 0, player[1]: 0}))
+            games_id.append(self.db.insertPairedPlayer(player))
         return games_id
 
     def getPlayers(self, id):
