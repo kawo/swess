@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 import tinydb
 from rich.console import Console
@@ -148,10 +149,13 @@ class Database:
         logging.info(f"Insert: {insert}")
         return insert
 
-    def insertRound(self, games, name):
+    def insertRound(self, games, name, date_ended: str = None):
         games_list = games
         round_name = name
-        round = {"name": round_name, "games": games_list}
+        date_ended = date_ended
+        now = datetime.now()
+        date_now = now.strftime("%d/%m/%Y - %H:%M:%S")
+        round = {"name": round_name, "games": games_list, "date_started": date_now, "date_ended": date_ended}
         return self.rounds_table.insert(round)
 
     def insertPairedPlayer(self, players):
@@ -183,11 +187,36 @@ class Database:
                 logging.error(f"Player ID {player} does not exists!")
         return player_exists
 
+    def checkRoundEndTime(self, tournament) -> bool:
+        tournament = tournament
+        check = False
+        last_round_id = len(tournament["rounds"])
+        logging.info(f"last_round_id = {last_round_id}")
+        round = self.rounds_table.get(doc_id=last_round_id)
+        logging.info(round)
+        date_ended = round["date_ended"]
+        logging.info(date_ended)
+        if date_ended:
+            check = True
+        return check
+
     def getPlayerById(self, value):
         id = int(value)
         player = self.players_table.get(doc_id=id)
-        player["id"] = id
         return player
+
+    def getRoundById(self, id):
+        round_id = int(id)
+        round = self.rounds_table.get(doc_id=round_id)
+        return round
+
+    def getPlayersIdFromGame(self, id):
+        game_id = int(id)
+        players = self.games_table.get(doc_id=game_id)
+        players_list = []
+        for player in players:
+            players_list.append(player)
+        return players_list
 
     def getTournamentById(self, value):
         id = int(value)

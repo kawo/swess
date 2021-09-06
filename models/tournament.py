@@ -81,6 +81,11 @@ class Tournament:
         tournament = self.db.getTournamentById(id)
         return tournament
 
+    def checkRoundEndTime(self, tournament) -> bool:
+        tournament = tournament
+        result = self.db.checkRoundEndTime(tournament)
+        return result
+
     def delTournaments(self):
         self.db = Database()
         self.db.tournament_table.truncate()

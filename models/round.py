@@ -34,3 +34,16 @@ class Round:
         players_up = players[:middle]
         players_down = players[middle:]
         return players_up, players_down
+
+    def getPlayersFromGames(self, id):
+        round_id = id
+        round = self.db.getRoundById(round_id)
+        games = round["games"]
+        players = []
+        for player in games:
+            players.append(Game.getPlayers(self, player))
+        players_list = []
+        for player in players:
+            players_list.append(self.db.getPlayerById(player[0]))
+            players_list.append(self.db.getPlayerById(player[1]))
+        return players_list

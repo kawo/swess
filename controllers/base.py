@@ -257,10 +257,21 @@ class Controller:
         rounds = tournament["rounds"]
         if rounds:
             logging.info(f"Tournament games: {rounds}")
-            return self.computeNextRound(tournament_id)
+            return self.continueTournament(tournament)
         else:
             logging.info(f"Tournament games: {rounds}")
             return self.computeFirstRound(tournament_id)
+
+    def continueTournament(self, tournament):
+        tournament = tournament
+        round = len(tournament["rounds"])
+        check = Tournament.checkRoundEndTime(self, tournament)
+        if check:
+            return self.base_view.printToUser("Ok nouveau round")
+        else:
+            players_list = Round.getPlayersFromGames(self, round)
+            self.tournament_view.displayRound(f"Round {round}", players_list)
+            return self.roundMenuChoice(round)
 
     def computeFirstRound(self, id):
         tournament_id = id

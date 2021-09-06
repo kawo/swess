@@ -163,3 +163,23 @@ class TournamentView(BaseView):
         self.printToUser("1. Enter results")
         self.printToUser("2. Return to Main Menu")
         self.printToUser("\n")
+
+    def displayRound(self, name, players):
+        round_name = name
+        players = players
+        self.printToUser("\n")
+        table = Table(show_header=True, header_style="bold", title=round_name, box=box.SIMPLE)
+        table.add_column("Game 1", justify="center")
+        table.add_column("Game 2", justify="center")
+        table.add_column("Game 3", justify="center")
+        table.add_column("Game 4", justify="center")
+        table.add_row(
+            f"{players[0]['first_name']} {players[0]['last_name']} ({players[0]['rating']})\nvs\n{players[1]['first_name']} {players[1]['last_name']} ({players[1]['rating']})",
+            f"{players[2]['first_name']} {players[2]['last_name']} ({players[2]['rating']})\nvs\n{players[3]['first_name']} {players[3]['last_name']} ({players[3]['rating']})",
+            f"{players[4]['first_name']} {players[4]['last_name']} ({players[4]['rating']})\nvs\n{players[5]['first_name']} {players[5]['last_name']} ({players[5]['rating']})",
+            f"{players[6]['first_name']} {players[6]['last_name']} ({players[6]['rating']})\nvs\n{players[7]['first_name']} {players[7]['last_name']} ({players[7]['rating']})",
+        )
+        self.printToUser(table, justify="center")
+        self.printToUser("1. Enter results")
+        self.printToUser("2. Return to Main Menu")
+        self.printToUser("\n")

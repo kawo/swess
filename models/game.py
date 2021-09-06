@@ -11,3 +11,8 @@ class Game:
         for player in players:
             games_id.append(self.db.insertPairedPlayer({player[0]: 0, player[1]: 0}))
         return games_id
+
+    def getPlayers(self, id):
+        game_id = id
+        players = self.db.getPlayersIdFromGame(game_id)
+        return players
