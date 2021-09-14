@@ -7,8 +7,10 @@ SWESS is the combination of "SWISS" and "CHESS". SWESS is a console app that man
 **Require python 3.9**
 
 1. Clone repository
-2. Create a virtual env ("python -m env .venv" for example)
-3. Install requirements with pip: "pip install -r requirements.txt"
+2. Create a virtualenv:
+>python -m venv .venv
+3. Install requirements with pip:
+>pip install -r requirements.txt
 4. Run "python swess.py"
 
 ## Usage
