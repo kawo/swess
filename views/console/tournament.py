@@ -1,3 +1,4 @@
+"""Tournaments View"""
 import logging
 
 from rich import box
@@ -38,6 +39,7 @@ class TournamentView(BaseView):
         self.printToUser("\n")
 
     def displayNewTournament(self):
+        """Form to add New Tournament"""
         self.console.clear()
         tournament = {}
         logging.info("Asking for Tournament Name")
@@ -68,6 +70,7 @@ class TournamentView(BaseView):
         return tournament
 
     def addPlayers(self):
+        """Form to add players to new tournament"""
         players = []
         logging.info("Asking for players list")
         self.printToUser("Add 8 players:")
@@ -146,6 +149,7 @@ class TournamentView(BaseView):
         self.printToUser("\n")
 
     def displayFirstRound(self, players):
+        """Display first round"""
         players = players
         self.printToUser("\n")
         table = Table(show_header=True, header_style="bold", title="Round 1", box=box.SIMPLE)
@@ -166,6 +170,7 @@ class TournamentView(BaseView):
         self.printToUser("\n")
 
     def displayRound(self, round, players, games: list = []):
+        """Display rounds"""
         games = games
         round_number = round
         logging.info(f"displayRound: {round_number}")
@@ -190,10 +195,12 @@ class TournamentView(BaseView):
         self.printToUser("\n")
 
     def chooseGame(self):
+        """Aske user to choose a game to enter restuls"""
         game_id = self.askUser("Enter results for which game? ")
         return game_id
 
     def showGame(self, players, game_id):
+        """Show game details"""
         game_id = game_id
         players = players
         self.printToUser("\n")
@@ -212,6 +219,7 @@ class TournamentView(BaseView):
         self.printToUser(table, justify="center")
 
     def displayTournamentEnded(self, tournament, players):
+        """Display Ended Tournament"""
         self.console.clear()
         tournament = tournament
         players = players
@@ -253,6 +261,7 @@ class TournamentView(BaseView):
         self.printToUser("\n")
 
     def displayEndedRound(self, round, players, games: list = []):
+        """Display Ended Round"""
         games = games
         round_number = round
         logging.info(f"displayRound: {round_number}")

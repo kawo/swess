@@ -1,3 +1,4 @@
+"""Players View"""
 import logging
 
 from rich import box
@@ -56,6 +57,7 @@ class PlayerView(BaseView):
         self.printToUser("\n")
 
     def askNewRanking(self):
+        """ask user new ranking"""
         ranking = self.askUser("New ranking: ")
         return ranking
 

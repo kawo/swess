@@ -1,3 +1,4 @@
+"""Game Model"""
 import logging
 
 from models.database import Database
@@ -8,6 +9,15 @@ class Game:
         self.db = Database()
 
     def registerGame(self, players, first: bool = False):
+        """Register new game
+
+        Args:
+            players (tuple): players pairs
+            first (bool, optional): if it's first game. Defaults to False.
+
+        Returns:
+            int: return game id
+        """
         first = first
         players = players
         games_id = []
@@ -16,6 +26,7 @@ class Game:
         return games_id
 
     def getPlayersFromGames(self, games_list):
+        """Get players from games"""
         games_list = games_list
         logging.info(f"getPlayersFromGames games_list = {games_list}")
         players_list = []
@@ -55,16 +66,19 @@ class Game:
         return players_list
 
     def getPlayers(self, id):
+        """Get player data from game"""
         game_id = id
         players = self.db.getPlayersIdFromGame(game_id)
         return players
 
     def getGame(self, game):
+        """Get game"""
         game_id = game
         result = self.db.getGame(game_id)
         return result
 
     def addScore(self, game, player_id, score):
+        """Add/Modify score"""
         game_id = game
         player_id = int(player_id)
         score = float(score)

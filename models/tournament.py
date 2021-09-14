@@ -1,3 +1,4 @@
+"""Tournament Model"""
 import logging
 
 from models.database import Database
@@ -50,6 +51,12 @@ class Tournament:
         return self.register_tournament
 
     def registerRoundToTournament(self, round, id):
+        """Register new round to tournament
+
+        Args:
+            round int: round id
+            id int: tournament id
+        """
         round = round
         tournament_id = id
         self.db = Database()
@@ -62,11 +69,13 @@ class Tournament:
         return all_tournaments
 
     def getAllOpenedTournaments(self):
+        """Get all opened tournaments"""
         self.db = Database()
         opened_tournament = self.db.getOpenedTournaments()
         return opened_tournament
 
     def addPlayers(self, value):
+        """Add players to tournament"""
         players = value
         self.db = Database()
         result = self.db.addPlayers(players)
@@ -76,29 +85,48 @@ class Tournament:
             logging.error("Players not added to tournaments!")
 
     def getTournamentById(self, value):
+        """Get tournament details from ID
+
+        Args:
+            value int: tournament id
+
+        Returns:
+            list: tournament data
+        """
         id = value
         self.db = Database()
         tournament = self.db.getTournamentById(id)
         return tournament
 
     def getPreviousRound(self, tournament):
+        """Get previous round"""
         tournament_id = tournament
         tournament = Tournament.getTournamentById(self, tournament_id)
         previous_round = len(tournament["rounds"])
         return previous_round
 
     def checkRoundEndTime(self, tournament_id) -> bool:
+        """Check if a round is ended
+
+        Args:
+            tournament_id (int): tournament id
+
+        Returns:
+            bool: True if round is ended
+        """
         tournament_id = tournament_id
         result = self.db.checkRoundEndTime(tournament_id)
         return result
 
     def delTournaments(self):
+        """Delete all tournaments data"""
         self.db = Database()
         self.db.tournament_table.truncate()
         self.db.rounds_table.truncate()
         self.db.games_table.truncate()
 
     def endTournament(self, tournament_id):
+        """End tournament"""
         tournament_id = tournament_id
         self.db = Database()
         return self.db.endTournament(tournament_id)

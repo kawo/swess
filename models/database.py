@@ -1,3 +1,4 @@
+"""Database Model"""
 import logging
 from datetime import datetime
 
@@ -87,6 +88,7 @@ class Database:
         return insert
 
     def getAll(self, value: str):
+        """Get all data from specified table"""
         table = value
         if table == "players":
             logging.info("Getting all players from database...")
@@ -101,6 +103,7 @@ class Database:
             return None
 
     def getOpenedTournaments(self):
+        """Get only tournament with no end date"""
         opened_tournaments = []
         tournaments = self.tournament_table.all()
         for tournament in tournaments:
@@ -151,6 +154,16 @@ class Database:
         return insert
 
     def insertRound(self, games, name, date_ended: str = None):
+        """Insert a round
+
+        Args:
+            games (list): list of games
+            name (str): round name
+            date_ended (str, optional): date when round is ended. Defaults to None.
+
+        Returns:
+            bool: True if successfull
+        """
         games_list = games
         round_name = name
         date_ended = date_ended
@@ -160,12 +173,14 @@ class Database:
         return self.rounds_table.insert(round)
 
     def endRound(self, round):
+        """End round"""
         round_id = round
         now = datetime.now()
         date_now = now.strftime("%d/%m/%Y - %H:%M:%S")
         return self.rounds_table.update({"date_ended": date_now}, doc_ids=[round_id])
 
     def endTournament(self, tournament_id):
+        """End tournament"""
         tournament_id = int(tournament_id)
         now = datetime.now()
         date_now = now.strftime("%d/%m/%Y - %H:%M:%S")
@@ -173,6 +188,15 @@ class Database:
         return self.tournament_table.update({"end_date": date_now}, doc_ids=[tournament_id])
 
     def insertPairedPlayer(self, players, first: bool = False):
+        """Insert paired players
+
+        Args:
+            players (tuple): paired players
+            first (bool, optional): [description]. Defaults to False.
+
+        Returns:
+            int: return new game id
+        """
         paired_players = players
         first = first
         if first:
@@ -193,6 +217,7 @@ class Database:
         return game_id
 
     def addPlayers(self, value) -> bool:
+        """Add player to tournament"""
         players = value
         players_exists = self.checkPlayerID(players)
         if players_exists:
@@ -203,6 +228,7 @@ class Database:
             return players_exists
 
     def checkPlayerID(self, value) -> bool:
+        """Check if player ID exists"""
         players = value
         player_exists = True
         for player in players:
@@ -217,6 +243,14 @@ class Database:
         return player_exists
 
     def checkRoundEndTime(self, tournament_id) -> bool:
+        """Check if round is ended
+
+        Args:
+            tournament_id (list): tournament data
+
+        Returns:
+            bool: True if round is ended
+        """
         tournament_id = tournament_id
         tournament = self.getTournamentById(tournament_id)
         check = False
@@ -230,38 +264,45 @@ class Database:
         return check
 
     def getPlayerById(self, value):
+        """Grab player by ID"""
         id = int(value)
         player = self.players_table.get(doc_id=id)
         player.update({"id": id})
         return player
 
     def getRoundById(self, id):
+        """Grab round by ID"""
         round_id = int(id)
         round = self.rounds_table.get(doc_id=round_id)
         return round
 
     def getPlayersIdFromGame(self, id):
+        """Grab player from a game"""
         game_id = int(id)
         players = self.games_table.get(doc_id=game_id)
         return players
 
     def getScores(self, game):
+        """Grab score from a game"""
         game = game
         result = self.games_table.get(doc_id=game)
         logging.info(f"Scores: {result}")
         return result
 
     def getTournamentById(self, value):
+        """Grab tournament by ID"""
         id = int(value)
         tournament = self.tournament_table.get(doc_id=id)
         return tournament
 
     def getGame(self, game):
+        """Get game by ID"""
         game_id = int(game)
         game = self.games_table.get(doc_id=game_id)
         return game
 
     def getGamesFromRound(self, round_id):
+        """Grab games list from round"""
         round_id = int(round_id)
         round = self.rounds_table.get(doc_id=round_id)
         games = []
@@ -271,6 +312,7 @@ class Database:
         return games
 
     def registerRound(self, round, id):
+        """Register round in tournament"""
         round = [round]
         tournament_id = int(id)
         logging.info(f"{round} {tournament_id}")
@@ -278,11 +320,13 @@ class Database:
         return result
 
     def modifyRanking(self, id, ranking):
+        """Modify ranking of player"""
         id = int(id)
         ranking = int(ranking)
         return self.players_table.update({"rating": ranking}, doc_ids=[id])
 
     def modifyScore(self, game, player, score):
+        """Modify score of player"""
         game_id = int(game)
         player_id = int(player)
         score = float(score)

@@ -11,21 +11,40 @@ class BaseView:
         self.console = Console()
 
     def printToUser(self, value, justify: str = "default"):
+        """Print something to console
+
+        Args:
+            value str: string printed on console
+            justify (str, optional): justification. Defaults to "default".
+
+        Returns:
+            str: string to user
+        """
         print_value = value
         justify = justify
         console_print = self.console.print(print_value, justify=justify)  # type: ignore
         return console_print
 
     def askUser(self, value: str):
+        """Ask something to user
+
+        Args:
+            value (str): the question
+
+        Returns:
+            str: the answer
+        """
         question_value = value
         question = self.console.input(question_value)
         return question
 
     def askUserChoice(self):
+        """Ask user choice"""
         choice = self.askUser("What do you want to do? ")
         return choice
 
     def askUserGame(self):
+        """Ask user which game"""
         choice = self.askUser("Enter results for which game? ")
         return choice
 
@@ -75,6 +94,7 @@ class BaseView:
             return self.askReturnToMainMenu()
 
     def askPlayerId(self):
+        """Ask user player ID"""
         ask = self.askUser("Enter Player ID: ")
         if ask:
             return ask
@@ -82,6 +102,7 @@ class BaseView:
             return self.askPlayerId()
 
     def askTournamentId(self):
+        """Ask user tournament ID"""
         ask = self.askUser("Enter Tournament ID: ")
         if ask:
             return ask

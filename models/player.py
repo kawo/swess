@@ -1,3 +1,4 @@
+"""Player Model"""
 import logging
 
 from models.database import Database
@@ -55,33 +56,26 @@ class Player:
         return all_players
 
     def getPlayerById(self, value):
+        """Get player by ID"""
         id = value
         self.db = Database()
         player = self.db.getPlayerById(id)
         return player
 
-    def modifyFirstName(self, value: str):
-        pass
-
-    def modifyLastName(self, value: str):
-        pass
-
-    def modifyBirthday(self, value: str):
-        pass
-
-    def modifyGender(self, value: str):
-        pass
-
     def modifyRanking(self, id: int, ranking: int):
+        """Modify player rating
+
+        Args:
+            id (int): player id
+            ranking (int): player rating
+        """
         id = id
         ranking = ranking
         self.db = Database()
         self.db.modifyRanking(id, ranking)
 
-    def delete(self, value: int):
-        pass
-
     def dummyData(self):
+        """Dummy data for testing purpose"""
         players = [
             {"first_name": "Piers", "last_name": "Kelly", "gender": "M", "birthday": "10/09/1980", "rating": 1500},
             {"first_name": "Rose", "last_name": "Lawrence", "gender": "F", "birthday": "08/01/1984", "rating": 0},

@@ -1,3 +1,4 @@
+"""Round Model"""
 import logging
 
 from models.database import Database
@@ -10,6 +11,16 @@ class Round:
         self.game = Game()
 
     def pairPlayers(self, players, round: int = 1, first: bool = False):
+        """Pair players with swiss rules
+
+        Args:
+            players (list): players data
+            round (int, optional): round id. Defaults to 1.
+            first (bool, optional): if it's first round. Defaults to False.
+
+        Returns:
+            list: list of players data sorted
+        """
         first = first
         current_round = round
         players = players
@@ -50,6 +61,15 @@ class Round:
             return paired_players, round_number
 
     def getPairedPlayers(self, players, first: bool = False):
+        """Get paired players data
+
+        Args:
+            players (list): players data
+            first (bool, optional): if it's first paired. Defaults to False.
+
+        Returns:
+            list: list of players data
+        """
         first = first
         players = players
         logging.info(f"getPairedPlayers init: {players}")
@@ -70,6 +90,7 @@ class Round:
             return paired_players
 
     def splitPlayers(self, players):
+        """Split player list in half"""
         players = players
         list_len = len(players)
         middle = list_len // 2
@@ -78,10 +99,12 @@ class Round:
         return players_up, players_down
 
     def endRound(self, round):
+        """End round"""
         round_id = round
         return self.db.endRound(round_id)
 
     def getPlayersFromGames(self, id):
+        """Grab players from games"""
         round_id = id
         round = self.db.getRoundById(round_id)
         games = round["games"]
@@ -95,6 +118,7 @@ class Round:
         return players_list
 
     def getScoreFromGames(self, round):
+        """Grab scores from games"""
         round_id = round
         round = self.db.getRoundById(round_id)
         games = round["games"]
@@ -108,6 +132,7 @@ class Round:
         return scores
 
     def getGamesFromRound(self, round_id):
+        """Grab games from round"""
         round_id = round_id
         games = self.db.getGamesFromRound(round_id)
         return games

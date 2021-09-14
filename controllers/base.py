@@ -72,11 +72,13 @@ class Controller:
             return self.startApp()
 
     def returnToMainMenu(self):
+        """Return to main menu"""
         choice = self.base_view.askReturnToMainMenu()
         if choice:
             return self.startApp()
 
     def choosePlayer(self):
+        """Ask user to choose player ID"""
         choice = self.base_view.askPlayerId()
         if choice:
             player = Player.getPlayerById(self, choice)
@@ -90,6 +92,7 @@ class Controller:
         return self.tournamentsMenuChoice()
 
     def createNewTournament(self):
+        """Create a new tournament"""
         tournament = self.tournament_view.displayNewTournament()
         name = tournament["name"]
         location = tournament["location"]
@@ -123,6 +126,7 @@ class Controller:
                 return self.startApp()
 
     def addPlayersToTournament(self):
+        """Add players to tournament"""
         players_list = Player.getAllPlayers(self)
         self.player_view.displayAllPlayers(players_list)
         players = self.tournament_view.addPlayers()
@@ -130,6 +134,7 @@ class Controller:
         return self.showCurrentTournaments()
 
     def addPlayer(self):
+        """Add new player in general"""
         player = self.player_view.displayAddPlayer()
         first_name = player["first_name"]
         last_name = player["last_name"]
@@ -168,6 +173,7 @@ class Controller:
         return self.playersMenuChoice()
 
     def playersMenuChoice(self):
+        """Menu choice for player view"""
         choice = self.base_view.askUserChoice()
         if choice:
             if choice == "1":
@@ -180,6 +186,7 @@ class Controller:
             return self.playersMenuChoice()
 
     def playerMenuChoice(self, id):
+        """Menu choice for one player"""
         player_id = id
         choice = self.base_view.askUserChoice()
         if choice:
@@ -193,6 +200,7 @@ class Controller:
             return self.playerMenuChoice()
 
     def modifyPlayerRanking(self, id):
+        """Ask user new rating for player"""
         id = id
         ranking = self.player_view.askNewRanking()
         Player.modifyRanking(self, id, ranking)
@@ -208,11 +216,13 @@ class Controller:
         return self.playersMenuChoice()
 
     def showCurrentTournaments(self):
+        """Show tournaments with no end date"""
         opened_tournament = Tournament.getAllOpenedTournaments(self)
         self.tournament_view.displayTournamentLogs(opened_tournament)
         return self.tournamentsMenuChoice()
 
     def tournamentsMenuChoice(self):
+        """Menu for tournaments"""
         choice = self.base_view.askUserChoice()
         if choice:
             if choice == "1":
@@ -225,6 +235,7 @@ class Controller:
             return self.tournamentsMenuChoice()
 
     def chooseTournament(self):
+        """Ask user to choose a tournament"""
         choice = self.base_view.askTournamentId()
         if choice:
             tournament = Tournament.getTournamentById(self, choice)
@@ -246,6 +257,7 @@ class Controller:
                 return self.tournamentMenuChoice(choice)
 
     def tournamentMenuChoice(self, tournament):
+        """Menu for one tournament"""
         tournament_id = tournament
         logging.info(f"Tournament ID: {tournament_id}")
         choice = self.base_view.askUserChoice()
@@ -262,6 +274,7 @@ class Controller:
             return self.tournamentMenuChoice(tournament_id)
 
     def startTournament(self, id):
+        """Start or resume tournament"""
         tournament_id = id
         logging.info(f"Tournament ID: {tournament_id}")
         tournament = Tournament.getTournamentById(self, tournament_id)
@@ -281,6 +294,7 @@ class Controller:
             return self.computeFirstRound(tournament_id)
 
     def continueTournament(self, round, tournament_id):
+        """Resume tournament"""
         tournament_id = tournament_id
         current_round = round
         check = Tournament.checkRoundEndTime(self, tournament_id)
@@ -298,6 +312,7 @@ class Controller:
             return self.roundMenuChoice(current_round, tournament_id)
 
     def computeFirstRound(self, id):
+        """Compute first round of tournament"""
         tournament_id = id
         logging.info(f"Tournament ID: {tournament_id}")
         tournament = Tournament.getTournamentById(self, tournament_id)
@@ -322,6 +337,7 @@ class Controller:
         return self.roundMenuChoice(round, tournament_id)
 
     def roundMenuChoice(self, round, tournament_id):
+        """Menu for round"""
         round_id = round
         tournament_id = tournament_id
         logging.info(f"Round ID: {round_id}")
@@ -343,6 +359,7 @@ class Controller:
             return self.roundMenuChoice(round_id, tournament_id)
 
     def enterResults(self, round, tournament_id):
+        """Ask user for results"""
         round_id = round
         tournament_id = tournament_id
         game_id = self.tournament_view.askUserGame()
@@ -368,11 +385,13 @@ class Controller:
             return self.enterResults(round_id)
 
     def showGame(self, game):
+        """Show game data"""
         game_id = game
         result = Game.getGame(self, game_id)
         return result
 
     def computeNextRound(self, tournament_id, round_id):
+        """Go to the next round within specified range"""
         tournament_id = tournament_id
         round_id = round_id
         tournament = Tournament.getTournamentById(self, tournament_id)
@@ -406,6 +425,7 @@ class Controller:
             return self.roundMenuChoice(next_round, tournament_id)
 
     def endedTournamentChoices(self, choice, tournament):
+        """Menu for ended tournaments"""
         choice = choice
         tournament = tournament
         if choice == "1":
@@ -423,9 +443,11 @@ class Controller:
             return self.startApp()
 
     def generateDummyData(self):
+        """Generate dummy data for testing"""
         Player.dummyData(self)
         return self.showAllPlayers()
 
     def deleteAllTournaments(self):
+        """Delete all tournaments data"""
         Tournament.delTournaments(self)
         return self.showTournamentLogs()
