@@ -3,6 +3,7 @@ from datetime import datetime
 
 import tinydb
 from rich.console import Console
+from tinydb.operations import add
 from tinydb.queries import where
 
 
@@ -164,11 +165,24 @@ class Database:
         date_now = now.strftime("%d/%m/%Y - %H:%M:%S")
         return self.rounds_table.update({"date_ended": date_now}, doc_ids=[round_id])
 
-    def insertPairedPlayer(self, players):
+    def insertPairedPlayer(self, players, first: bool = False):
         paired_players = players
-        game_id = self.games_table.insert(
-            {"player1": paired_players[0], "score1": 0.0, "player2": paired_players[1], "score2": 0.0}
-        )
+        first = first
+        if first:
+            game_id = self.games_table.insert(
+                {"player1": paired_players[0], "score1": 0.0, "player2": paired_players[1], "score2": 0.0}
+            )
+            logging.info(f"insertPairedPlayer: {game_id}")
+        else:
+            game_id = self.games_table.insert(
+                {
+                    "player1": paired_players[0][0],
+                    "score1": paired_players[0][1],
+                    "player2": paired_players[1][0],
+                    "score2": paired_players[1][1],
+                }
+            )
+            logging.info(f"insertPairedPlayer: {game_id}")
         return game_id
 
     def addPlayers(self, value) -> bool:
@@ -195,15 +209,15 @@ class Database:
                 logging.error(f"Player ID {player} does not exists!")
         return player_exists
 
-    def checkRoundEndTime(self, tournament) -> bool:
-        tournament = tournament
+    def checkRoundEndTime(self, tournament_id) -> bool:
+        tournament_id = tournament_id
+        tournament = self.getTournamentById(tournament_id)
         check = False
         last_round_id = len(tournament["rounds"])
         logging.info(f"last_round_id = {last_round_id}")
         round = self.rounds_table.get(doc_id=last_round_id)
-        logging.info(round)
         date_ended = round["date_ended"]  # type: ignore
-        logging.info(date_ended)
+        logging.info(f"Round date_ended: {date_ended}")
         if date_ended:
             check = True
         return check
@@ -240,11 +254,20 @@ class Database:
         game = self.games_table.get(doc_id=game_id)
         return game
 
+    def getGamesFromRound(self, round_id):
+        round_id = int(round_id)
+        round = self.rounds_table.get(doc_id=round_id)
+        games = []
+        for game in round["games"]:
+            games.append(game)
+        logging.info(f"Games list: {games}")
+        return games
+
     def registerRound(self, round, id):
         round = [round]
         tournament_id = int(id)
         logging.info(f"{round} {tournament_id}")
-        result = self.tournament_table.update({"rounds": round}, doc_ids=[tournament_id])
+        result = self.tournament_table.update(add("rounds", round), doc_ids=[tournament_id])
         return result
 
     def modifyRanking(self, id, ranking):

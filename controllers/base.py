@@ -23,7 +23,7 @@ class Controller:
         Returns:
             Display Main Menu
         """
-        logging.info("Calling view.displayMainMenu")
+        logging.info("Calling displayMainMenu...")
         choice = self.base_view.displayMainMenu()
         self.getMainMenuChoice(choice)
 
@@ -39,22 +39,22 @@ class Controller:
             logging.warning("User input is empty")
             return self.startApp()
         if choice == "1":
-            logging.info("Displaying all players")
+            logging.info("Displaying all players...")
             return self.showAllPlayers()
         if choice == "2":
-            logging.info("Displaying ranking")
+            logging.info("Displaying ranking...")
             return self.sortPlayersByRating()
         if choice == "3":
-            logging.info("Displaying tournaments logs")
+            logging.info("Displaying tournaments logs...")
             return self.showTournamentLogs()
         if choice == "4":
-            logging.info("Displaying current opened tournaments")
+            logging.info("Displaying current opened tournaments...")
             return self.showCurrentTournaments()
         if choice == "5":
-            logging.info("Creating new player")
+            logging.info("Creating new player...")
             return self.addPlayer()
         if choice == "6":
-            logging.info("Creating new tournament")
+            logging.info("Creating new tournament...")
             return self.createNewTournament()
         if choice == "7":
             self.base_view.printToUser("Byyye!")
@@ -256,28 +256,36 @@ class Controller:
         logging.info(f"Tournament ID: {tournament_id}")
         tournament = Tournament.getTournamentById(self, tournament_id)
         rounds = tournament["rounds"]
-        if rounds:
-            logging.info(f"Tournament games: {rounds}")
-            return self.continueTournament(tournament, tournament_id)
+        rounds_len = len(rounds)
+        if rounds_len != 0:
+            if rounds_len == 1:
+                round_ended = Tournament.checkRoundEndTime(self, tournament_id)
+                logging.info(f"startTournament round_ended: {round_ended}")
+                if not round_ended:
+                    logging.info("First round not ended, resuming...")
+                    return self.computeFirstRound(tournament_id)
+            logging.info(f"Tournament current round: {rounds_len}")
+            return self.continueTournament(rounds_len, tournament_id)
         else:
-            logging.info(f"Tournament games: {rounds}")
+            logging.info("First Tournament Round")
             return self.computeFirstRound(tournament_id)
 
-    def continueTournament(self, tournament, tournament_id):
+    def continueTournament(self, round, tournament_id):
         tournament_id = tournament_id
-        tournament = tournament
-        round = len(tournament["rounds"])
-        check = Tournament.checkRoundEndTime(self, tournament)
+        current_round = round
+        check = Tournament.checkRoundEndTime(self, tournament_id)
         if check:
-            return self.computeNextRound(tournament_id)
+            return self.computeNextRound(tournament_id, current_round)
         else:
-            players_list = Round.getPlayersFromGames(self, round)
-            players_id = []
-            for player in players_list:
-                players_id.append(player["id"])
-            scores = Round.getScoreFromGames(self, round)
-            self.tournament_view.displayRound(f"Round {round}", players_list, scores)
-            return self.roundMenuChoice(round, tournament, tournament_id)
+            games = Round.getGamesFromRound(self, current_round)
+            logging.info(f"continueTournament games list: {games}")
+            players = Game.getPlayersFromGames(self, games)
+            logging.info(f"Players list from Round {current_round}: {players}")
+            paired = Round()
+            paired_players = paired.getPairedPlayers(players)
+            logging.info(f"continueTournament paired_players: {paired_players}")
+            self.tournament_view.displayRound(current_round, players)
+            return self.roundMenuChoice(current_round, tournament_id)
 
     def computeFirstRound(self, id):
         tournament_id = id
@@ -287,48 +295,63 @@ class Controller:
         for player in tournament["players"]:
             logging.info(f"Player: {player}")
             players.append(Player.getPlayerById(self, player))
-        first_round = Round()
-        paired_players, round = first_round.pairPlayers(players, True)
-        logging.info(f"computeFirstRound: {paired_players}")
-        logging.info(f"computeFirstRound ID: {round}")
-        Tournament.registerRoundToTournament(self, round, tournament_id)
+        rounds = tournament["rounds"]
+        rounds_len = len(rounds)
+        if rounds_len == 0:
+            first_round = Round()
+            paired_players, round = first_round.pairPlayers(players, first=True)
+            logging.info(f"computeFirstRound players: {paired_players}")
+            logging.info(f"computeFirstRound ID: {round}")
+            logging.info("Registering new round...")
+            Tournament.registerRoundToTournament(self, round, tournament_id)
+        else:
+            round = rounds_len
+            round_player = Round()
+            paired_players = round_player.getPairedPlayers(players, first=True)
         self.tournament_view.displayFirstRound(paired_players)
-        return self.roundMenuChoice(round)
+        return self.roundMenuChoice(round, tournament_id)
 
-    def roundMenuChoice(self, round, tournament, tournament_id):
+    def roundMenuChoice(self, round, tournament_id):
         round_id = round
-        tournament = tournament
         tournament_id = tournament_id
         logging.info(f"Round ID: {round_id}")
         choice = self.base_view.askUserChoice()
         if choice:
             if choice == "1":
                 logging.info(f"User choice: {choice}")
-                return self.enterResults(round_id, tournament, tournament_id)
+                return self.enterResults(round_id, tournament_id)
             if choice == "2":
                 logging.info("Ending round...")
                 Round.endRound(self, round_id)
-                return self.computeNextRound(tournament_id)
+                return self.computeNextRound(tournament_id, round_id)
             if choice == "3":
                 logging.info(f"User choice: {choice}")
                 return self.startApp()
             else:
-                return self.roundMenuChoice()
+                return self.roundMenuChoice(round_id, tournament_id)
         else:
-            return self.roundMenuChoice()
+            return self.roundMenuChoice(round_id, tournament_id)
 
-    def enterResults(self, round, tournament, tournament_id):
+    def enterResults(self, round, tournament_id):
         round_id = round
-        tournament = tournament
         tournament_id = tournament_id
         game_id = self.tournament_view.askUserGame()
         if game_id:
-            players = Game.getPlayersFromGame(self, game_id)
+            players = Game.getPlayersFromGames(self, game_id)
             self.tournament_view.showGame(players, game_id)
             player_id = self.base_view.askUser("Enter Player ID: ")
             score = self.base_view.askUser("Enter score (1, 0.5, 0): ")
             Game.addScore(self, game_id, player_id, score)
-            return self.continueTournament(tournament, tournament_id)
+            if round_id == 1:
+                round_ended = Tournament.checkRoundEndTime(self, tournament_id)
+                if not round_ended:
+                    logging.info("enterResults: computeFirstRound")
+                    return self.computeFirstRound(tournament_id)
+                else:
+                    logging.info("enterResults: continueTournament")
+                    return self.continueTournament(round_id, tournament_id)
+            logging.info("enterResults: continueTournament")
+            return self.continueTournament(round_id, tournament_id)
         else:
             return self.enterResults(round_id)
 
@@ -337,21 +360,22 @@ class Controller:
         result = Game.getGame(self, game_id)
         return result
 
-    def computeNextRound(self, tournament):
-        tournament_id = tournament
-        next_round = Tournament.getNextRound(self, tournament_id)
-        tournament = Tournament.getTournamentById(self, tournament_id)
-        players = []
-        for player in tournament["players"]:
-            logging.info(f"Player: {player}")
-            players.append(Player.getPlayerById(self, player))
-        first_round = Round()
-        paired_players, round = first_round.pairPlayers(players, True)
-        logging.info(f"computeFirstRound: {paired_players}")
-        logging.info(f"computeFirstRound ID: {round}")
-        Tournament.registerRoundToTournament(self, round, tournament_id)
-        self.tournament_view.displayFirstRound(paired_players)
-        return self.roundMenuChoice(round)
+    def computeNextRound(self, tournament_id, round_id):
+        tournament_id = tournament_id
+        round_id = round_id
+        games = Round.getGamesFromRound(self, round_id)
+        logging.info(f"computeNextRound games list: {games}")
+        players = Game.getPlayersFromGames(self, games)
+        logging.info(f"Players list from Round {round_id}: {players}")
+        round = Round()
+        paired_players, next_round = round.pairPlayers(players, round=round_id)
+        logging.info(f"computeNextRound: {paired_players}")
+        logging.info(f"computeNextRound ID: {next_round}")
+        Tournament.registerRoundToTournament(self, next_round, tournament_id)
+        paired_players = round.getPairedPlayers(players)
+        logging.info(f"displayRound: {round_id}, {paired_players}")
+        self.tournament_view.displayRound(round_id, paired_players)
+        return self.roundMenuChoice(next_round, tournament_id)
 
     def generateDummyData(self):
         Player.dummyData(self)

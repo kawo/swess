@@ -81,17 +81,19 @@ class Tournament:
         tournament = self.db.getTournamentById(id)
         return tournament
 
-    def getNextRound(self, tournament):
+    def getPreviousRound(self, tournament):
         tournament_id = tournament
         tournament = Tournament.getTournamentById(self, tournament_id)
-        next_round = len(tournament["rounds"]) + 1
-        return next_round
+        previous_round = len(tournament["rounds"])
+        return previous_round
 
-    def checkRoundEndTime(self, tournament) -> bool:
-        tournament = tournament
-        result = self.db.checkRoundEndTime(tournament)
+    def checkRoundEndTime(self, tournament_id) -> bool:
+        tournament_id = tournament_id
+        result = self.db.checkRoundEndTime(tournament_id)
         return result
 
     def delTournaments(self):
         self.db = Database()
         self.db.tournament_table.truncate()
+        self.db.rounds_table.truncate()
+        self.db.games_table.truncate()
