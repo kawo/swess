@@ -165,6 +165,13 @@ class Database:
         date_now = now.strftime("%d/%m/%Y - %H:%M:%S")
         return self.rounds_table.update({"date_ended": date_now}, doc_ids=[round_id])
 
+    def endTournament(self, tournament_id):
+        tournament_id = int(tournament_id)
+        now = datetime.now()
+        date_now = now.strftime("%d/%m/%Y - %H:%M:%S")
+        logging.info(f"End Date: {date_now}, Tournament ID: {tournament_id}")
+        return self.tournament_table.update({"end_date": date_now}, doc_ids=[tournament_id])
+
     def insertPairedPlayer(self, players, first: bool = False):
         paired_players = players
         first = first

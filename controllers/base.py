@@ -87,7 +87,7 @@ class Controller:
         """Ask model for all registered tournaments"""
         tournament = Tournament.getAllTournaments(self)
         self.tournament_view.displayTournamentLogs(tournament)
-        return self.returnToMainMenu()
+        return self.tournamentsMenuChoice()
 
     def createNewTournament(self):
         tournament = self.tournament_view.displayNewTournament()
@@ -228,12 +228,22 @@ class Controller:
         choice = self.base_view.askTournamentId()
         if choice:
             tournament = Tournament.getTournamentById(self, choice)
-            players = []
-            for player in tournament["players"]:
-                players.append(Player.getPlayerById(self, player))
-            players_sorted = sorted(players, key=lambda player: player["first_name"])
-            self.tournament_view.displayTournament(tournament, players_sorted)
-            return self.tournamentMenuChoice(choice)
+            if tournament["end_date"]:
+                round_id = len(tournament["rounds"])
+                games = Round.getGamesFromRound(self, round_id)
+                players = Game.getPlayersFromGames(self, games)
+                players_sorted = sorted(players, key=lambda player: player["score"], reverse=True)
+                logging.info(f"chooseTournament: {round_id}, {games}, {players_sorted}")
+                self.tournament_view.displayTournamentEnded(tournament, players_sorted)
+                choice = self.base_view.askUserChoice()
+                return self.endedTournamentChoices(choice, tournament)
+            else:
+                players = []
+                for player in tournament["players"]:
+                    players.append(Player.getPlayerById(self, player))
+                players_sorted = sorted(players, key=lambda player: player["first_name"])
+                self.tournament_view.displayTournament(tournament, players_sorted)
+                return self.tournamentMenuChoice(choice)
 
     def tournamentMenuChoice(self, tournament):
         tournament_id = tournament
@@ -365,19 +375,52 @@ class Controller:
     def computeNextRound(self, tournament_id, round_id):
         tournament_id = tournament_id
         round_id = round_id
-        games = Round.getGamesFromRound(self, round_id)
-        logging.info(f"computeNextRound games list: {games}")
-        players = Game.getPlayersFromGames(self, games)
-        logging.info(f"Players list from Round {round_id}: {players}")
-        round = Round()
-        paired_players, next_round = round.pairPlayers(players, round=round_id)
-        logging.info(f"computeNextRound: {paired_players}")
-        logging.info(f"computeNextRound ID: {next_round}")
-        Tournament.registerRoundToTournament(self, next_round, tournament_id)
-        paired_players = Game.getPlayersFromGames(self, games)
-        logging.info(f"displayRound: Round {round_id}, {paired_players}")
-        self.tournament_view.displayRound(round_id, paired_players, games)
-        return self.roundMenuChoice(next_round, tournament_id)
+        tournament = Tournament.getTournamentById(self, tournament_id)
+        rounds_number = tournament["rounds_number"]
+        logging.info(f"Tournament Rounds Number: {rounds_number}")
+        tournament_rounds_len = len(tournament["rounds"]) - 1
+        logging.info(f"Tournament Round Len: {tournament_rounds_len}")
+        if rounds_number == tournament_rounds_len:
+            logging.info("Tournament Ended!")
+            Tournament.endTournament(self, tournament_id)
+            games = Round.getGamesFromRound(self, round_id)
+            players = Game.getPlayersFromGames(self, games)
+            players_sorted = sorted(players, key=lambda player: player["score"], reverse=True)
+            logging.info(f"Final ranking by score: {players_sorted}")
+            self.tournament_view.displayTournamentEnded(tournament, players_sorted)
+            choice = self.base_view.askUserChoice()
+            return self.endedTournamentChoices(choice, tournament)
+        else:
+            games = Round.getGamesFromRound(self, round_id)
+            logging.info(f"computeNextRound games list: {games}")
+            players = Game.getPlayersFromGames(self, games)
+            logging.info(f"Players list from Round {round_id}: {players}")
+            round = Round()
+            paired_players, next_round = round.pairPlayers(players, round=round_id)
+            logging.info(f"computeNextRound: {paired_players}")
+            logging.info(f"computeNextRound ID: {next_round}")
+            Tournament.registerRoundToTournament(self, next_round, tournament_id)
+            paired_players = Game.getPlayersFromGames(self, games)
+            logging.info(f"displayRound: Round {round_id}, {paired_players}")
+            self.tournament_view.displayRound(round_id, paired_players, games)
+            return self.roundMenuChoice(next_round, tournament_id)
+
+    def endedTournamentChoices(self, choice, tournament):
+        choice = choice
+        tournament = tournament
+        if choice == "1":
+            rounds = tournament["rounds"]
+            for round in rounds:
+                games = Round.getGamesFromRound(self, round)
+                players = Game.getPlayersFromGames(self, games)
+                logging.info(f"ended: {games}, {players}")
+                self.tournament_view.displayEndedRound(round, players, games)
+            choice = self.base_view.askUserChoice()
+            return self.endedTournamentChoices(choice, tournament)
+        if choice == "2":
+            return self.startApp()
+        else:
+            return self.startApp()
 
     def generateDummyData(self):
         Player.dummyData(self)

@@ -33,7 +33,7 @@ class TournamentView(BaseView):
                 tournament["description"],
             )
         self.printToUser(table, justify="center")
-        self.printToUser("1. Choose a Tournament")
+        self.printToUser("1. Choose Tournament")
         self.printToUser("2. Return to Main Menu")
         self.printToUser("\n")
 
@@ -210,3 +210,67 @@ class TournamentView(BaseView):
                 str(player["rating"]),
             )
         self.printToUser(table, justify="center")
+
+    def displayTournamentEnded(self, tournament, players):
+        self.console.clear()
+        tournament = tournament
+        players = players
+        table = Table(
+            show_header=True, header_style="bold", title="\n-=[ SWESS ]=-\nTournament details", box=box.SIMPLE
+        )
+        table.add_column("Name", justify="center")
+        table.add_column("Location", justify="center")
+        table.add_column("Date", justify="center")
+        table.add_column("End Date", justify="center")
+        table.add_column("Rounds", justify="center")
+        table.add_column("Time Type", justify="center")
+        table.add_column("Description", justify="center")
+        table.add_row(
+            tournament["name"],
+            tournament["location"],
+            tournament["date"],
+            tournament["end_date"],
+            str(tournament["rounds_number"]),
+            tournament["time_type"],
+            tournament["description"],
+        )
+        table.add_row("", "", "", "", "", "", "")
+        table.add_row("", "", "", "Players Ranking By Score", "", "", "")
+        table.add_row("", "", "", "", "", "", "")
+        for player in players:
+            table.add_row(
+                "",
+                player["first_name"],
+                player["last_name"],
+                player["gender"],
+                player["birthday"],
+                str(player["score"]),
+                "",
+            )
+        self.printToUser(table, justify="center")
+        self.printToUser("1. Show Tournament's Rounds and Games")
+        self.printToUser("2. Return to Main Menu")
+        self.printToUser("\n")
+
+    def displayEndedRound(self, round, players, games: list = []):
+        games = games
+        round_number = round
+        logging.info(f"displayRound: {round_number}")
+        players = players
+        logging.info(f"displayRound players list: {players}")
+        self.printToUser("\n")
+        table = Table(show_header=True, header_style="bold", title=f"Round {round_number}", box=box.SIMPLE)
+        table.add_column(f"Game {games[0]}", justify="center")
+        table.add_column(f"Game {games[1]}", justify="center")
+        table.add_column(f"Game {games[2]}", justify="center")
+        table.add_column(f"Game {games[3]}", justify="center")
+        table.add_row(
+            f"{players[0]['first_name']} {players[0]['last_name']} ({players[0]['score']})\nvs\n{players[1]['first_name']} {players[1]['last_name']} ({players[1]['score']})",
+            f"{players[2]['first_name']} {players[2]['last_name']} ({players[2]['score']})\nvs\n{players[3]['first_name']} {players[3]['last_name']} ({players[3]['score']})",
+            f"{players[4]['first_name']} {players[4]['last_name']} ({players[4]['score']})\nvs\n{players[5]['first_name']} {players[5]['last_name']} ({players[5]['score']})",
+            f"{players[6]['first_name']} {players[6]['last_name']} ({players[6]['score']})\nvs\n{players[7]['first_name']} {players[7]['last_name']} ({players[7]['score']})",
+        )
+        self.printToUser(table, justify="center")
+        self.printToUser("1. Show Tournament's Rounds and Games")
+        self.printToUser("2. Return to Main Menu")
+        self.printToUser("\n")

@@ -97,3 +97,8 @@ class Tournament:
         self.db.tournament_table.truncate()
         self.db.rounds_table.truncate()
         self.db.games_table.truncate()
+
+    def endTournament(self, tournament_id):
+        tournament_id = tournament_id
+        self.db = Database()
+        return self.db.endTournament(tournament_id)
