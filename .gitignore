@@ -9,10 +9,6 @@ __pycache__/
 # vscode
 .vscode
 
-# flake8
-# .flake8
-# flake8_rapport/
-
 # mypy
 .mypy_cache
 
