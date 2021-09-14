@@ -16,3 +16,9 @@ SWESS is the combination of "SWISS" and "CHESS". SWESS is a console app that man
 Choose options from the menu.
 
 Debug section is for testing : here you can generate Players or delete all tournaments data
+
+## Flake8 report
+
+You can regenerate flake8 report with this command:
+
+>flake8 --format=html --htmldir=flake8_rapport
