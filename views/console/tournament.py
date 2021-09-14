@@ -165,17 +165,18 @@ class TournamentView(BaseView):
         self.printToUser("3. Return to Main Menu")
         self.printToUser("\n")
 
-    def displayRound(self, round, players):
+    def displayRound(self, round, players, games: list = []):
+        games = games
         round_number = round
         logging.info(f"displayRound: {round_number}")
         players = players
         logging.info(f"displayRound players list: {players}")
         self.printToUser("\n")
         table = Table(show_header=True, header_style="bold", title=f"Round {round_number}", box=box.SIMPLE)
-        table.add_column("Game 1", justify="center")
-        table.add_column("Game 2", justify="center")
-        table.add_column("Game 3", justify="center")
-        table.add_column("Game 4", justify="center")
+        table.add_column(f"Game {games[0]}", justify="center")
+        table.add_column(f"Game {games[1]}", justify="center")
+        table.add_column(f"Game {games[2]}", justify="center")
+        table.add_column(f"Game {games[3]}", justify="center")
         table.add_row(
             f"{players[0]['first_name']} {players[0]['last_name']} ({players[0]['score']})\nvs\n{players[1]['first_name']} {players[1]['last_name']} ({players[1]['score']})",
             f"{players[2]['first_name']} {players[2]['last_name']} ({players[2]['score']})\nvs\n{players[3]['first_name']} {players[3]['last_name']} ({players[3]['score']})",

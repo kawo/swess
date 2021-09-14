@@ -284,7 +284,7 @@ class Controller:
             paired = Round()
             paired_players = paired.getPairedPlayers(players)
             logging.info(f"continueTournament paired_players: {paired_players}")
-            self.tournament_view.displayRound(current_round, players)
+            self.tournament_view.displayRound(current_round, players, games)
             return self.roundMenuChoice(current_round, tournament_id)
 
     def computeFirstRound(self, id):
@@ -337,11 +337,13 @@ class Controller:
         tournament_id = tournament_id
         game_id = self.tournament_view.askUserGame()
         if game_id:
+            logging.info(f"enterResults game_id: {game_id}")
             players = Game.getPlayersFromGames(self, game_id)
             self.tournament_view.showGame(players, game_id)
             player_id = self.base_view.askUser("Enter Player ID: ")
             score = self.base_view.askUser("Enter score (1, 0.5, 0): ")
-            Game.addScore(self, game_id, player_id, score)
+            add_score = Game()
+            add_score.addScore(game_id, player_id, score)
             if round_id == 1:
                 round_ended = Tournament.checkRoundEndTime(self, tournament_id)
                 if not round_ended:
@@ -372,9 +374,9 @@ class Controller:
         logging.info(f"computeNextRound: {paired_players}")
         logging.info(f"computeNextRound ID: {next_round}")
         Tournament.registerRoundToTournament(self, next_round, tournament_id)
-        paired_players = round.getPairedPlayers(players)
-        logging.info(f"displayRound: {round_id}, {paired_players}")
-        self.tournament_view.displayRound(round_id, paired_players)
+        paired_players = Game.getPlayersFromGames(self, games)
+        logging.info(f"displayRound: Round {round_id}, {paired_players}")
+        self.tournament_view.displayRound(round_id, paired_players, games)
         return self.roundMenuChoice(next_round, tournament_id)
 
     def generateDummyData(self):

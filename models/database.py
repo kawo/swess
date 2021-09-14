@@ -279,7 +279,7 @@ class Database:
         game_id = int(game)
         player_id = int(player)
         score = float(score)
-        logging.info(f"{game_id}, {player_id}, {score}")
+        logging.info(f"modifyScore: {game_id}, {player_id}, {score}")
         result = self.games_table.get(doc_id=game_id)
         if result["player1"] == player_id:
             return self.games_table.update({"score1": score}, doc_ids=[game_id])

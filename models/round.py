@@ -66,6 +66,7 @@ class Round:
             players_sorted = sorted(players, key=lambda player: player["score"], reverse=True)
             player_up, player_down = self.splitPlayers(players_sorted)
             paired_players = tuple(zip(player_up, player_down))
+            logging.info(f"getPairedPlayers sorted: {paired_players}")
             return paired_players
 
     def splitPlayers(self, players):
