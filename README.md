@@ -11,7 +11,8 @@ SWESS is the combination of "SWISS" and "CHESS". SWESS is a console app that man
 >python -m venv .venv
 3. Install requirements with pip:
 >pip install -r requirements.txt
-4. Run "python swess.py"
+4. Run:
+>python swess.py
 
 ## Usage
 
