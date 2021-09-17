@@ -10,7 +10,7 @@ class Round:
         self.db = Database()
         self.game = Game()
 
-    def pairPlayers(self, players, round: int = 1, first: bool = False):
+    def pairPlayers(self, players, tournament_id, round: int = 1, first: bool = False):
         """Pair players with swiss rules
 
         Args:
@@ -24,6 +24,7 @@ class Round:
         first = first
         current_round = round
         players = players
+        tournament_id = tournament_id
         logging.info(f"pairPlayers init: {players}")
         if first:
             logging.info(f"pairPlayers FIRST players_rating_list: {players}")
@@ -33,6 +34,17 @@ class Round:
             for player in players_sorted:
                 players_id.append(player["id"])
             player_up_id, player_down_id = self.splitPlayers(players_id)
+            logging.info(f"player_up_id: {player_up_id} len = {len(player_up_id)}")
+            logging.info(f"player_down_id: {player_down_id} len = {len(player_down_id)}")
+            for i in range(4):
+                logging.info(
+                    f"splitPlayers: player_up = {player_up_id[i]}, versus = {player_down_id[i]}, tournament = {int(tournament_id)}"
+                )
+                self.registerPlayerPair(player_up_id[i], player_down_id[i], int(tournament_id))
+                logging.info(
+                    f"splitPlayers: player_down = {player_down_id[i]}, versus = {player_up_id[i]}, tournament = {int(tournament_id)}"
+                )
+                self.registerPlayerPair(player_down_id[i], player_up_id[i], int(tournament_id))
             player_up, player_down = self.splitPlayers(players_sorted)
             paired_players_id = tuple(zip(player_up_id, player_down_id))
             paired_players = tuple(zip(player_up, player_down))
@@ -51,6 +63,34 @@ class Round:
                 players_id.append([player["id"], player["score"]])
             logging.info(f"pairPlayers: {players_id}")
             player_up_id, player_down_id = self.splitPlayers(players_id)
+            for i in range(4):
+                logging.info(
+                    f"splitPlayers: player = {player_up_id[i][0]}, versus = {[player_down_id[i][0]]}, tournament = {int(tournament_id)}"
+                )
+                paired = self.checkPlayerPair(player_up_id[i][0], [player_down_id[i][0]], int(tournament_id))
+                logging.info(f"checkPlayerPair paired = {paired}")
+                if paired:
+                    initial_pos = i
+                    logging.info(f"checkPlayerPair paired loop = {paired}, initial_pos = {initial_pos}")
+                    for x in range(3):
+                        paired_check = self.checkPlayerPair(
+                            player_up_id[i][0], [player_down_id[x + 1][0]], int(tournament_id)
+                        )
+                        logging.info(f"checkPlayerPair paired_check loop = {paired_check}")
+                        if not paired_check:
+                            logging.info(f"checkPlayerPair False: {player_up_id[i][0]}, {[player_down_id[x + 1][0]]}")
+                            logging.info(f"checkPlayerPair False: {player_down_id[x + 1][0]}, {[player_up_id[i][0]]}")
+                            logging.info(
+                                f"initial_pos player = {player_down_id[initial_pos]} new pos = {player_down_id[x + 1]}"
+                            )
+                            logging.info(f"initial list: {player_down_id}")
+                            self.swapPlayers(player_down_id, (x + 1), initial_pos)
+                            logging.info(f"new list: {player_down_id}")
+                            self.updatePlayerPair(player_up_id[i][0], [player_down_id[x + 1][0]], int(tournament_id))
+                            self.updatePlayerPair(player_down_id[x + 1][0], [player_up_id[i][0]], int(tournament_id))
+                else:
+                    self.updatePlayerPair(player_up_id[i][0], [player_down_id[i][0]], int(tournament_id))
+                    self.updatePlayerPair(player_down_id[i][0], [player_up_id[i][0]], int(tournament_id))
             player_up, player_down = self.splitPlayers(players_sorted)
             paired_players_id = tuple(zip(player_up_id, player_down_id))
             paired_players = tuple(zip(player_up, player_down))
@@ -59,6 +99,32 @@ class Round:
             round_number = self.db.insertRound(games, f"Round {next_round}")
             logging.info(f"pairPlayers round number: {next_round}")
             return paired_players, round_number
+
+    def registerPlayerPair(self, player_id, player_versus_id, tournament_id):
+        player_id = player_id
+        player_versus_id = player_versus_id
+        tournament_id = tournament_id
+        return self.db.insertPlayerPair(player_id, player_versus_id, tournament_id)
+
+    def updatePlayerPair(self, player_id, player_versus_id, tournament_id):
+        player_id = player_id
+        player_versus_id = player_versus_id
+        tournament_id = tournament_id
+        return self.db.updatePlayerPair(player_id, player_versus_id, tournament_id)
+
+    def checkPlayerPair(self, player_id, player_versus_id, tournament_id):
+        player_id = player_id
+        player_versus_id = player_versus_id
+        tournament_id = tournament_id
+        return self.db.checkPlayerPair(player_id, player_versus_id, tournament_id)
+
+    def swapPlayers(self, players_list, pos1, pos2):
+        first_ele = players_list.pop(pos1)
+        second_ele = players_list.pop(pos2)
+
+        players_list.insert(pos1, second_ele)
+        players_list.insert(pos2, first_ele)
+        return players_list
 
     def getPairedPlayers(self, players, first: bool = False):
         """Get paired players data

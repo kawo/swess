@@ -5,7 +5,7 @@ from datetime import datetime
 import tinydb
 from rich.console import Console
 from tinydb.operations import add
-from tinydb.queries import where
+from tinydb.queries import Query, where
 
 
 class Database:
@@ -15,6 +15,7 @@ class Database:
         self.tournament_table = self.db.table("tournaments")
         self.rounds_table = self.db.table("rounds")
         self.games_table = self.db.table("games")
+        self.paired_players = self.db.table("paired")
         self.console = Console()
 
     def serializePlayer(self, value) -> dict:
@@ -86,6 +87,37 @@ class Database:
                 logging.warning("Player not inserted in database!")
                 insert = False
         return insert
+
+    def insertPlayerPair(self, player_id, player_versus_id, tournament_id):
+        player_id = player_id
+        player_versus_id = [player_versus_id]
+        tournament_id = tournament_id
+        result = {"player": player_id, "versus": player_versus_id, "tournament": tournament_id}
+        logging.info(f"insertPlayerPair result: {result}")
+        return self.paired_players.insert(result)
+
+    def updatePlayerPair(self, player_id, player_versus_id, tournament_id):
+        player_id = player_id
+        player_versus_id = player_versus_id
+        tournament_id = tournament_id
+        logging.info(
+            f"updatePlayerPair: player = {player_id}, tournament = {tournament_id}, versus = {player_versus_id}"
+        )
+        return self.paired_players.update(
+            add("versus", player_versus_id), ((where("player") == player_id) & (where("tournament") == tournament_id))
+        )
+
+    def checkPlayerPair(self, player_id, player_versus_id, tournament_id):
+        player_id = player_id
+        player_versus_id = player_versus_id
+        tournament_id = tournament_id
+        logging.info(f"checkPlayerPair: player = {player_id}, versus = {player_versus_id}")
+        Paired = Query()
+        result = self.paired_players.contains(
+            (Paired.player == player_id) & (Paired.tournament == tournament_id) & (Paired.versus.any(player_versus_id))
+        )
+        logging.info(f"checkPlayerPair result: {result}")
+        return result
 
     def getAll(self, value: str):
         """Get all data from specified table"""
@@ -315,7 +347,7 @@ class Database:
         """Register round in tournament"""
         round = [round]
         tournament_id = int(id)
-        logging.info(f"{round} {tournament_id}")
+        logging.info(f"registerRound numbet {round} to {tournament_id}")
         result = self.tournament_table.update(add("rounds", round), doc_ids=[tournament_id])
         return result
 

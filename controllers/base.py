@@ -324,7 +324,7 @@ class Controller:
         rounds_len = len(rounds)
         if rounds_len == 0:
             first_round = Round()
-            paired_players, round = first_round.pairPlayers(players, first=True)
+            paired_players, round = first_round.pairPlayers(players, tournament_id, first=True)
             logging.info(f"computeFirstRound players: {paired_players}")
             logging.info(f"computeFirstRound ID: {round}")
             logging.info("Registering new round...")
@@ -397,7 +397,7 @@ class Controller:
         tournament = Tournament.getTournamentById(self, tournament_id)
         rounds_number = tournament["rounds_number"]
         logging.info(f"Tournament Rounds Number: {rounds_number}")
-        tournament_rounds_len = len(tournament["rounds"]) - 1
+        tournament_rounds_len = len(tournament["rounds"])
         logging.info(f"Tournament Round Len: {tournament_rounds_len}")
         if rounds_number == tournament_rounds_len:
             logging.info("Tournament Ended!")
@@ -415,7 +415,7 @@ class Controller:
             players = Game.getPlayersFromGames(self, games)
             logging.info(f"Players list from Round {round_id}: {players}")
             round = Round()
-            paired_players, next_round = round.pairPlayers(players, round=round_id)
+            paired_players, next_round = round.pairPlayers(players, tournament_id, round=round_id)
             logging.info(f"computeNextRound: {paired_players}")
             logging.info(f"computeNextRound ID: {next_round}")
             Tournament.registerRoundToTournament(self, next_round, tournament_id)

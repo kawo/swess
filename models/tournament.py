@@ -124,6 +124,7 @@ class Tournament:
         self.db.tournament_table.truncate()
         self.db.rounds_table.truncate()
         self.db.games_table.truncate()
+        self.db.paired_players.truncate()
 
     def endTournament(self, tournament_id):
         """End tournament"""
